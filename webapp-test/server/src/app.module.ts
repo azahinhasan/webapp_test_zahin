@@ -5,8 +5,9 @@ import { AppService } from './app.service';
 import { User } from './entities/user.entity';
 import { Follow } from './entities/follow.entity';
 import { Murmur } from './entities/murmur.entity';
-import { Like } from 'typeorm';
 import { AuthModule } from './app/auth/auth.module';
+import { MurmurModule } from './app/murmur/murmur.module';
+import { Like } from './entities/like.entity';
 
 @Module({
   imports: [
@@ -21,7 +22,8 @@ import { AuthModule } from './app/auth/auth.module';
       synchronize: true,
     }),
     TypeOrmModule.forFeature([User,Follow,Murmur,Like]),
-    AuthModule
+    AuthModule,
+    MurmurModule
   ],
   controllers: [AppController],
   providers: [AppService],
