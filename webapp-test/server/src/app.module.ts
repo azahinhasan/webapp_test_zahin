@@ -6,6 +6,7 @@ import { User } from './entities/user.entity';
 import { Follow } from './entities/follow.entity';
 import { Murmur } from './entities/murmur.entity';
 import { Like } from 'typeorm';
+import { AuthModule } from './app/auth/auth.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { Like } from 'typeorm';
       synchronize: true,
     }),
     TypeOrmModule.forFeature([User,Follow,Murmur,Like]),
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],
