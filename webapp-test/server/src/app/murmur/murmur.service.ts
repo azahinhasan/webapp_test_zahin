@@ -6,7 +6,7 @@ import {
   InternalServerErrorException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 
 import { CreateMurmurDto } from "./dto/murmur.dto";
 import { Murmur } from "../../entities/murmur.entity";
@@ -51,15 +51,35 @@ export class MurmurService {
     }
   }
 
-  async listMurmurs(pagination: PaginationDto) {
+  async listMurmurs(userId: number, pagination: PaginationDto) {
     try {
       const { page, limit } = pagination;
-      const [data, count] = await this.murmurRepo.findAndCount({
+      const [murmurs, count] = await this.murmurRepo.findAndCount({
         skip: (page - 1) * limit,
         take: limit,
         relations: ["user"],
         order: { createdAt: "DESC" },
       });
+
+      const murmurIds = murmurs.map((m) => m.id);
+      if (murmurIds.length === 0) {
+        return { data: [], count };
+      }
+
+      const likes = await this.likeRepo.find({
+        where: {
+          user: { id: userId },
+          murmur: { id: In(murmurIds) },
+        },
+        relations: ["murmur"],
+      });
+      const likedMurmurIds = new Set(likes.map((like) => like.murmur.id));
+
+      const data = murmurs.map((murmur) => ({
+        ...murmur,
+        isLiked: likedMurmurIds.has(murmur.id),
+      }));
+
       return { data, count };
     } catch (error) {
       throw new InternalServerErrorException(error.message);

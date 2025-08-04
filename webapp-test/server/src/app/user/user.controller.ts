@@ -1,6 +1,5 @@
-import { Controller, Post, UseGuards, Body, Param, Get } from "@nestjs/common";
+import { Controller, Post, UseGuards, Body, Param, Get, Patch } from "@nestjs/common";
 import { UserService } from "./user.service";
-import { FollowUserDto } from "./dto/user.dto";
 import { GetIssuer } from "../../common/decorators/get-issuer.decorator";
 import { CsrfGuard } from "../../guards/csrf-guard";
 import { getIssuer } from "../../common/dtos/index.dto";
@@ -9,10 +8,10 @@ import { getIssuer } from "../../common/dtos/index.dto";
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post("follow")
+  @Patch(":id/follow")
   @UseGuards(CsrfGuard)
-  follow(@GetIssuer() issuer: getIssuer, @Body() dto: FollowUserDto) {
-    return this.userService.toggleFollowUser(issuer.user.sub, dto.targetUserId);
+  follow(@GetIssuer() issuer: getIssuer, @Param("id") id: number) {
+    return this.userService.toggleFollowUser(issuer.user.sub, id);
   }
 
   @Get("me")
