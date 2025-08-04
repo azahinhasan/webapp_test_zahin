@@ -37,10 +37,10 @@ export class MurmurController {
     return this.murmurService.listMurmurs(pagination);
   }
 
-  @Patch(":id/like")
+  @Patch(":id/toggle-like")
   @UseGuards(CsrfGuard)
-  like(@GetIssuer() issuer: getIssuer, @Param("id") id: number) {
-    return this.murmurService.likeMurmur(issuer.user.sub, id);
+  toggleLike(@GetIssuer() issuer: getIssuer, @Param("id") id: number) {
+    return this.murmurService.toggleLikeMurmur(issuer.user.sub, id);
   }
 
   @Get("me")

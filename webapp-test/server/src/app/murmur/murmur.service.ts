@@ -66,20 +66,23 @@ export class MurmurService {
     }
   }
 
-  async likeMurmur(userId: number, murmurId: number) {
+  async toggleLikeMurmur(userId: number, murmurId: number) {
     try {
       const existingLike = await this.likeRepo.findOne({
         where: { user: { id: userId }, murmur: { id: murmurId } },
       });
-      if (existingLike) throw new ConflictException("Already liked");
 
-      const like = this.likeRepo.create({
-        user: { id: userId },
-        murmur: { id: murmurId },
-      });
-      await this.likeRepo.save(like);
-
-      return { message: "Murmur liked" };
+      if (existingLike) {
+        await this.likeRepo.remove(existingLike);
+        return { message: "Murmur unliked" };
+      } else {
+        const like = this.likeRepo.create({
+          user: { id: userId },
+          murmur: { id: murmurId },
+        });
+        await this.likeRepo.save(like);
+        return { message: "Murmur liked" };
+      }
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
