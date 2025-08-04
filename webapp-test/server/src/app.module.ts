@@ -3,6 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { User } from './entities/user.entity';
+import { Follow } from './entities/follow.entity';
+import { Murmur } from './entities/murmur.entity';
+import { Like } from 'typeorm';
 
 @Module({
   imports: [
@@ -13,10 +16,10 @@ import { User } from './entities/user.entity';
       username: 'docker',
       password: 'docker',
       database: 'test',
-      entities: [User],
+      entities: [User,Follow,Murmur,Like],
       synchronize: true,
     }),
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User,Follow,Murmur,Like]),
   ],
   controllers: [AppController],
   providers: [AppService],
