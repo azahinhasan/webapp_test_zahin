@@ -33,8 +33,9 @@ export class MurmurController {
   }
 
   @Get()
-  list(@Query() pagination: PaginationDto) {
-    return this.murmurService.listMurmurs(pagination);
+  @UseGuards(CsrfGuard)
+  list(@GetIssuer() issuer: getIssuer, @Query() pagination: PaginationDto) {
+    return this.murmurService.listMurmurs(issuer.user.sub, pagination);
   }
 
   @Patch(":id/toggle-like")
