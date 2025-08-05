@@ -54,7 +54,7 @@ export class MurmurService {
   async listMurmurs(userId: number, pagination: PaginationDto) {
     try {
       const { page, limit } = pagination;
-      const [murmurs, count] = await this.murmurRepo.findAndCount({
+      let [murmurs, count] = await this.murmurRepo.findAndCount({
         skip: (page - 1) * limit,
         take: limit,
         relations: ["user"],
@@ -63,7 +63,7 @@ export class MurmurService {
 
       const murmurIds = murmurs.map((m) => m.id);
       if (murmurIds.length === 0) {
-        return { data: [], count};
+        return { data: [], count };
       }
 
       const likes = await this.likeRepo.find({
@@ -75,10 +75,19 @@ export class MurmurService {
       });
       const likedMurmurIds = new Set(likes.map((like) => like.murmur.id));
 
-      const data = murmurs.map((murmur) => ({
-        ...murmur,
-        isLiked: likedMurmurIds.has(murmur.id),
-      }));
+      const data = await Promise.all(
+        murmurs.map(async (murmur) => {
+          const totalLikes = await this.likeRepo.count({
+            where: { murmur: { id: murmur.id } },
+          });
+
+          return {
+            ...murmur,
+            isLiked: likedMurmurIds.has(murmur.id),
+            totalLikes,
+          };
+        })
+      );
 
       return { data, count };
     } catch (error) {

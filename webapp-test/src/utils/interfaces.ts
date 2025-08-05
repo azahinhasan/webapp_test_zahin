@@ -26,6 +26,7 @@ export interface Murmur {
   id: number
   content: string
   isLiked: boolean
+  totalLikes: number
   user: {
     id: number
     name: string

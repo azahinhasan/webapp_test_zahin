@@ -12,6 +12,7 @@ import NavBar from './components/NavBar'
 import LoginPage from './pages/loginPage'
 import SignupPage from './pages/signupPage'
 import { CssBaseline, Container } from '@mui/material'
+import TimelinePage from './pages/timelinePage'
 import { csrfToken } from './utils/api'
 
 const queryClient = new QueryClient()
@@ -45,7 +46,7 @@ const AppRoutes = () => {
             path="/"
             element={
               <PrivateRoute>
-                <div>TimeLine</div>
+                <TimelinePage />
               </PrivateRoute>
             }
           />
