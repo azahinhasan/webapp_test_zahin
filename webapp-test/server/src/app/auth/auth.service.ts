@@ -17,20 +17,20 @@ export class AuthService {
     private jwtService: JwtService
   ) {}
 
-  async signup(email: string, password: string) {
+  async signup(email: string, password: string, name: string) {
     try {
       const exists = await this.userRepo.findOne({ where: { email } });
       if (exists) throw new ConflictException("Email already taken");
 
       const passwordHash = await bcrypt.hash(password, 10);
-      const user = this.userRepo.create({ email, name: email, isActive: true });
+      const user = this.userRepo.create({ email, name, isActive: true });
       (user as any).passwordHash = passwordHash;
       await this.userRepo.save(user);
 
-      
       return {
         id: user.id,
         email: user.email,
+        name: user.name,
       };
     } catch (error) {
       throw new InternalServerErrorException(error.message);
@@ -39,8 +39,15 @@ export class AuthService {
 
   async login(email: string, password: string) {
     try {
-      const user = await this.userRepo.findOne({ where: { email } });
+      const user = await this.userRepo
+        .createQueryBuilder("user")
+        .addSelect(["user.passwordHash", "user.isActive"])
+        .where("user.email = :email", { email })
+        .getOne();
+
       if (!user) throw new UnauthorizedException("Invalid credentials");
+
+      if (!user.isActive) throw new UnauthorizedException("User inactive");
 
       const isMatch = await bcrypt.compare(
         password,
@@ -50,7 +57,7 @@ export class AuthService {
 
       const payload = {
         sub: user.id,
-        email: user.email
+        email: user.email,
       };
       const jwtToken = await this.jwtService.signAsync(payload);
 
@@ -59,5 +66,4 @@ export class AuthService {
       throw new InternalServerErrorException(error.message);
     }
   }
-  
 }

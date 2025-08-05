@@ -17,48 +17,53 @@ import { getIssuer } from "../../common/dtos/index.dto";
 import { PaginationDto } from "../../common/dtos/pagination.dto";
 
 @Controller("murmurs")
+@UseGuards(CsrfGuard)
 export class MurmurController {
   constructor(private readonly murmurService: MurmurService) {}
 
   @Post()
-  @UseGuards(CsrfGuard)
   create(@GetIssuer() issuer: getIssuer, @Body() dto: CreateMurmurDto) {
     return this.murmurService.createMurmur(issuer.user.sub, dto);
   }
 
   @Delete(":id")
-  @UseGuards(CsrfGuard)
   delete(@GetIssuer() issuer: getIssuer, @Param("id") id: number) {
     return this.murmurService.deleteMurmur(issuer.user.sub, id);
   }
 
   @Get()
-  @UseGuards(CsrfGuard)
   list(@GetIssuer() issuer: getIssuer, @Query() pagination: PaginationDto) {
     return this.murmurService.listMurmurs(issuer.user.sub, pagination);
   }
 
   @Patch(":id/toggle-like")
-  @UseGuards(CsrfGuard)
   toggleLike(@GetIssuer() issuer: getIssuer, @Param("id") id: number) {
     return this.murmurService.toggleLikeMurmur(issuer.user.sub, id);
   }
 
   @Get("me")
-  @UseGuards(CsrfGuard)
   myMurmurs(
     @Query() pagination: PaginationDto,
     @GetIssuer() issuer: getIssuer
   ) {
-    return this.murmurService.getMurmursByUser(pagination, issuer.user.sub);
+    return this.murmurService.getMurmursByUser(
+      pagination,
+      issuer.user.sub,
+      issuer.user.sub
+    );
   }
 
   @Get("user/:userId")
   getUserMurmurs(
     @Query() pagination: PaginationDto,
-    @Param("userId") userId: number
+    @Param("userId") userId: number,
+    @GetIssuer() issuer: getIssuer
   ) {
-    return this.murmurService.getMurmursByUser(pagination, userId);
+    return this.murmurService.getMurmursByUser(
+      pagination,
+      issuer.user.sub,
+      userId
+    );
   }
 
   @Get(":id")
