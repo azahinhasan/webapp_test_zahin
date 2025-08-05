@@ -7,10 +7,137 @@
 	},
 	"item": [
 		{
+			"name": "Generate CSRF token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"const newCsrfToken = jsonData.csrfToken;\r",
+							"\r",
+							"pm.collectionVariables.set(\"csrf-token\", newCsrfToken);\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-csrf-token",
+						"value": "{{csrf-token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/v1/auth/csrf-token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"csrf-token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Signup",
 			"request": {
 				"method": "POST",
-				"header": [],
+				"header": [
+					{
+						"key": "x-csrf-token",
+						"value": "{{csrf-token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"test@example.com\",\r\n  \"password\": \"SecurePass123\",\r\n  \"name\":\"test\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/v1/auth/signup",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"const accessToken = jsonData.accessToken;\r",
+							"\r",
+							"pm.collectionVariables.set(\"token\", accessToken);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-csrf-token",
+						"value": "{{csrf-token}}",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\r\n  \"email\": \"test@example.com\",\r\n  \"password\": \"SecurePass123\"\r\n}\r\n",
@@ -21,42 +148,15 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3001/auth/signup",
+					"raw": "http://localhost:3001/api/v1/auth/login",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "3001",
 					"path": [
-						"auth",
-						"signup"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Login",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n  \"email\": \"john.doe@example.com\",\r\n  \"password\": \"SecurePass123\"\r\n}\r\n",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:3001/auth/login",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3001",
-					"path": [
+						"api",
+						"v1",
 						"auth",
 						"login"
 					]
@@ -71,12 +171,12 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJpYXQiOjE3NTQzMjY5MzUsImV4cCI6MTc1NjkxODkzNX0.eNnVbZckFJVOBQdi3SmvYhcBPEjL0EwcLVD0vi3LcLQ",
+						"value": "Bearer {{token}}",
 						"type": "text"
 					},
 					{
-						"key": "X-CSRF-Token",
-						"value": "MTpqb2huLmRvZUBleGFtcGxlLmNvbTpmNWJiMDU0OTgzZDVjYjU2NTNmMGNhNWY4NDIxM2Y5NDo5NTUwMDUxYTcwOTQ5ZTE3NDhiODI4OTNjODlhNGJhNWE4ZWJmMzBjYjFjNDJhZjc1YTMyZDBkZDYzYzJkMGEx",
+						"key": "x-csrf-token",
+						"value": "{{csrf-token}}",
 						"type": "text"
 					}
 				],
@@ -90,13 +190,15 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3001/murmurs",
+					"raw": "http://localhost:3001/api/v1/murmurs",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "3001",
 					"path": [
+						"api",
+						"v1",
 						"murmurs"
 					]
 				}
@@ -110,12 +212,12 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJpYXQiOjE3NTQzMjY5MzUsImV4cCI6MTc1NjkxODkzNX0.eNnVbZckFJVOBQdi3SmvYhcBPEjL0EwcLVD0vi3LcLQ",
+						"value": "Bearer {{token}}",
 						"type": "text"
 					},
 					{
-						"key": "X-CSRF-Token",
-						"value": "MTpqb2huLmRvZUBleGFtcGxlLmNvbTpmNWJiMDU0OTgzZDVjYjU2NTNmMGNhNWY4NDIxM2Y5NDo5NTUwMDUxYTcwOTQ5ZTE3NDhiODI4OTNjODlhNGJhNWE4ZWJmMzBjYjFjNDJhZjc1YTMyZDBkZDYzYzJkMGEx",
+						"key": "x-csrf-token",
+						"value": "{{csrf-token}}",
 						"type": "text"
 					}
 				],
@@ -129,13 +231,15 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3001/murmurs/1/toggle-like",
+					"raw": "http://localhost:3001/api/v1/murmurs/1/toggle-like",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "3001",
 					"path": [
+						"api",
+						"v1",
 						"murmurs",
 						"1",
 						"toggle-like"
@@ -154,12 +258,12 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJpYXQiOjE3NTQzMjY5MzUsImV4cCI6MTc1NjkxODkzNX0.eNnVbZckFJVOBQdi3SmvYhcBPEjL0EwcLVD0vi3LcLQ",
+						"value": "Bearer {{token}}",
 						"type": "text"
 					},
 					{
-						"key": "X-CSRF-Token",
-						"value": "MTpqb2huLmRvZUBleGFtcGxlLmNvbTpmNWJiMDU0OTgzZDVjYjU2NTNmMGNhNWY4NDIxM2Y5NDo5NTUwMDUxYTcwOTQ5ZTE3NDhiODI4OTNjODlhNGJhNWE4ZWJmMzBjYjFjNDJhZjc1YTMyZDBkZDYzYzJkMGEx",
+						"key": "x-csrf-token",
+						"value": "{{csrf-token}}",
 						"type": "text"
 					}
 				],
@@ -173,19 +277,21 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3001/murmurs?page=2",
+					"raw": "http://localhost:3001/api/v1/murmurs?page=1",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "3001",
 					"path": [
+						"api",
+						"v1",
 						"murmurs"
 					],
 					"query": [
 						{
 							"key": "page",
-							"value": "2"
+							"value": "1"
 						}
 					]
 				}
@@ -202,12 +308,12 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJpYXQiOjE3NTQzMjY5MzUsImV4cCI6MTc1NjkxODkzNX0.eNnVbZckFJVOBQdi3SmvYhcBPEjL0EwcLVD0vi3LcLQ",
+						"value": "Bearer {{token}}",
 						"type": "text"
 					},
 					{
-						"key": "X-CSRF-Token",
-						"value": "MTpqb2huLmRvZUBleGFtcGxlLmNvbTpmNWJiMDU0OTgzZDVjYjU2NTNmMGNhNWY4NDIxM2Y5NDo5NTUwMDUxYTcwOTQ5ZTE3NDhiODI4OTNjODlhNGJhNWE4ZWJmMzBjYjFjNDJhZjc1YTMyZDBkZDYzYzJkMGEx",
+						"key": "x-csrf-token",
+						"value": "{{csrf-token}}",
 						"type": "text"
 					}
 				],
@@ -221,15 +327,24 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3001/murmurs/1",
+					"raw": "http://localhost:3001/api/v1/murmurs/1",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "3001",
 					"path": [
+						"api",
+						"v1",
 						"murmurs",
 						"1"
+					],
+					"query": [
+						{
+							"key": "x-csrf-token",
+							"value": null,
+							"disabled": true
+						}
 					]
 				}
 			},
@@ -245,12 +360,12 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJpYXQiOjE3NTQzMjY5MzUsImV4cCI6MTc1NjkxODkzNX0.eNnVbZckFJVOBQdi3SmvYhcBPEjL0EwcLVD0vi3LcLQ",
+						"value": "Bearer {{token}}",
 						"type": "text"
 					},
 					{
-						"key": "X-CSRF-Token",
-						"value": "MTpqb2huLmRvZUBleGFtcGxlLmNvbTpmNWJiMDU0OTgzZDVjYjU2NTNmMGNhNWY4NDIxM2Y5NDo5NTUwMDUxYTcwOTQ5ZTE3NDhiODI4OTNjODlhNGJhNWE4ZWJmMzBjYjFjNDJhZjc1YTMyZDBkZDYzYzJkMGEx",
+						"key": "x-csrf-token",
+						"value": "{{csrf-token}}",
 						"type": "text"
 					}
 				],
@@ -264,13 +379,15 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3001/murmurs/me?page=1",
+					"raw": "http://localhost:3001/api/v1/murmurs/me?page=1",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "3001",
 					"path": [
+						"api",
+						"v1",
 						"murmurs",
 						"me"
 					],
@@ -294,12 +411,12 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJpYXQiOjE3NTQzMjY5MzUsImV4cCI6MTc1NjkxODkzNX0.eNnVbZckFJVOBQdi3SmvYhcBPEjL0EwcLVD0vi3LcLQ",
+						"value": "Bearer {{token}}",
 						"type": "text"
 					},
 					{
 						"key": "X-CSRF-Token",
-						"value": "MTpqb2huLmRvZUBleGFtcGxlLmNvbTpmNWJiMDU0OTgzZDVjYjU2NTNmMGNhNWY4NDIxM2Y5NDo5NTUwMDUxYTcwOTQ5ZTE3NDhiODI4OTNjODlhNGJhNWE4ZWJmMzBjYjFjNDJhZjc1YTMyZDBkZDYzYzJkMGEx",
+						"value": "{{csrf-token}}",
 						"type": "text"
 					}
 				],
@@ -313,16 +430,25 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3001/murmurs/user/1",
+					"raw": "http://localhost:3001/api/v1/murmurs/user/1",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "3001",
 					"path": [
+						"api",
+						"v1",
 						"murmurs",
 						"user",
 						"1"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
 					]
 				}
 			},
@@ -338,12 +464,12 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJpYXQiOjE3NTQzMjY5MzUsImV4cCI6MTc1NjkxODkzNX0.eNnVbZckFJVOBQdi3SmvYhcBPEjL0EwcLVD0vi3LcLQ",
+						"value": "Bearer {{token}}",
 						"type": "text"
 					},
 					{
-						"key": "X-CSRF-Token",
-						"value": "MTpqb2huLmRvZUBleGFtcGxlLmNvbTpmNWJiMDU0OTgzZDVjYjU2NTNmMGNhNWY4NDIxM2Y5NDo5NTUwMDUxYTcwOTQ5ZTE3NDhiODI4OTNjODlhNGJhNWE4ZWJmMzBjYjFjNDJhZjc1YTMyZDBkZDYzYzJkMGEx",
+						"key": "x-csrf-token",
+						"value": "{{csrf-token}}",
 						"type": "text"
 					}
 				],
@@ -357,13 +483,15 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3001/users/me",
+					"raw": "http://localhost:3001/api/v1/users/me",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "3001",
 					"path": [
+						"api",
+						"v1",
 						"users",
 						"me"
 					]
@@ -381,12 +509,12 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJpYXQiOjE3NTQzMjY5MzUsImV4cCI6MTc1NjkxODkzNX0.eNnVbZckFJVOBQdi3SmvYhcBPEjL0EwcLVD0vi3LcLQ",
+						"value": "Bearer {{token}}",
 						"type": "text"
 					},
 					{
-						"key": "X-CSRF-Token",
-						"value": "MTpqb2huLmRvZUBleGFtcGxlLmNvbTpmNWJiMDU0OTgzZDVjYjU2NTNmMGNhNWY4NDIxM2Y5NDo5NTUwMDUxYTcwOTQ5ZTE3NDhiODI4OTNjODlhNGJhNWE4ZWJmMzBjYjFjNDJhZjc1YTMyZDBkZDYzYzJkMGEx",
+						"key": "x-csrf-token",
+						"value": "{{csrf-token}}",
 						"type": "text"
 					}
 				],
@@ -400,13 +528,15 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3001/users/2",
+					"raw": "http://localhost:3001/api/v1/users/2",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "3001",
 					"path": [
+						"api",
+						"v1",
 						"users",
 						"2"
 					]
@@ -417,22 +547,22 @@
 		{
 			"name": "Follow a User",
 			"request": {
-				"method": "POST",
+				"method": "PATCH",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJpYXQiOjE3NTQzMjY5MzUsImV4cCI6MTc1NjkxODkzNX0.eNnVbZckFJVOBQdi3SmvYhcBPEjL0EwcLVD0vi3LcLQ",
+						"value": "Bearer {{token}}",
 						"type": "text"
 					},
 					{
 						"key": "X-CSRF-Token",
-						"value": "MTpqb2huLmRvZUBleGFtcGxlLmNvbTpmNWJiMDU0OTgzZDVjYjU2NTNmMGNhNWY4NDIxM2Y5NDo5NTUwMDUxYTcwOTQ5ZTE3NDhiODI4OTNjODlhNGJhNWE4ZWJmMzBjYjFjNDJhZjc1YTMyZDBkZDYzYzJkMGEx",
+						"value": "{{csrf-token}}",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"targetUserId\": 2\r\n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -440,19 +570,56 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3001/users/follow",
+					"raw": "http://localhost:3001/api/v1/users/2/follow",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "3001",
 					"path": [
+						"api",
+						"v1",
 						"users",
+						"2",
 						"follow"
 					]
 				}
 			},
 			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "csrf-token",
+			"value": "Pl3Bz7du-rb_TBUAzIRKGzS4xqvS46tt8ZNo",
+			"type": "default"
+		},
+		{
+			"key": "token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJpYXQiOjE3NTQzMjY5MzUsImV4cCI6MTc1NjkxODkzNX0.eNnVbZckFJVOBQdi3SmvYhcBPEjL0EwcLVD0vi3LcLQ",
+			"type": "string"
 		}
 	]
 }

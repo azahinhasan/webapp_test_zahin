@@ -1,28 +1,29 @@
-import { Module, MiddlewareConsumer, NestModule } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthController } from "./auth.controller";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { User } from "../../entities/user.entity";
 import { JwtModule } from "@nestjs/jwt";
-// import * as csurf from "csurf";
-import { CsrfGuard } from "../../guards/csrf-guard";
+import { CsrfGuard } from "../../guards/auth-guard";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
-    JwtModule.register({
-      secret: "test-secret",
-      signOptions: { expiresIn: "30d" },
+    ConfigModule, 
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('jwt.secret'),
+        signOptions: {
+          expiresIn: configService.get<string>('jwt.expiresIn'),
+        },
+      }),
     }),
   ],
   controllers: [AuthController],
   providers: [AuthService, CsrfGuard],
   exports: [AuthService],
 })
-export class AuthModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    // consumer
-    //   .apply(csurf({ cookie: { httpOnly: true, signed: false } }))
-    //   .forRoutes("*");
-  }
-}
+export class AuthModule {}

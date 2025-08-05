@@ -54,7 +54,7 @@ export class MurmurService {
   async listMurmurs(userId: number, pagination: PaginationDto) {
     try {
       const { page, limit } = pagination;
-      const [murmurs, count] = await this.murmurRepo.findAndCount({
+      let [murmurs, count] = await this.murmurRepo.findAndCount({
         skip: (page - 1) * limit,
         take: limit,
         relations: ["user"],
@@ -75,10 +75,19 @@ export class MurmurService {
       });
       const likedMurmurIds = new Set(likes.map((like) => like.murmur.id));
 
-      const data = murmurs.map((murmur) => ({
-        ...murmur,
-        isLiked: likedMurmurIds.has(murmur.id),
-      }));
+      const data = await Promise.all(
+        murmurs.map(async (murmur) => {
+          const totalLikes = await this.likeRepo.count({
+            where: { murmur: { id: murmur.id } },
+          });
+
+          return {
+            ...murmur,
+            isLiked: likedMurmurIds.has(murmur.id),
+            totalLikes,
+          };
+        })
+      );
 
       return { data, count };
     } catch (error) {
@@ -108,17 +117,55 @@ export class MurmurService {
     }
   }
 
-  async getMurmursByUser(pagination: PaginationDto, userId: number) {
+  async getMurmursByUser(
+    pagination: PaginationDto,
+    userId: number,
+    otherUserId: number
+  ) {
     try {
       const { page, limit } = pagination;
-
-      const [data, count] = await this.murmurRepo.findAndCount({
-        where: { user: { id: userId } },
+      let [murmurs, count] = await this.murmurRepo.findAndCount({
+        where: { user: { id: otherUserId } },
         order: { createdAt: "DESC" },
         skip: (page - 1) * limit,
         take: limit,
         relations: ["user"],
       });
+
+      if (murmurs.length === 0) {
+        return {
+          data: [],
+          total: count,
+          page,
+          limit,
+          totalPages: Math.ceil(count / limit),
+        };
+      }
+
+      const murmurIds = murmurs.map((m) => m.id);
+
+      const likes = await this.likeRepo.find({
+        where: {
+          user: { id: userId },
+          murmur: { id: In(murmurIds) },
+        },
+        relations: ["murmur"],
+      });
+      const likedMurmurIds = new Set(likes.map((like) => like.murmur.id));
+
+      const data = await Promise.all(
+        murmurs.map(async (murmur) => {
+          const totalLikes = await this.likeRepo.count({
+            where: { murmur: { id: murmur.id } },
+          });
+
+          return {
+            ...murmur,
+            isLiked: likedMurmurIds.has(murmur.id),
+            totalLikes,
+          };
+        })
+      );
 
       return {
         data,
