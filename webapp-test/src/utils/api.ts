@@ -48,7 +48,7 @@ export const getMyMurmurs = (page: number) =>
 
 export const getUserMurmurs = (userId: number, page: number) =>
   api_v1.get(`/murmurs/user/${userId}?page=${page}`)
-
+export const deleteMurmur = (id: number) => api_v1.delete(`/murmurs/${id}`)
 // Users
 export const getMyUserInfo = () => api_v1.get('/users/me')
 

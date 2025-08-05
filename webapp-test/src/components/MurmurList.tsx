@@ -8,9 +8,13 @@ interface Props {
   currentPage: number
   totalPages: number
   onPageChange: (page: number) => void
-  onLike: (id: number) => void
-  isLiking: boolean
+  onLike?: (id: number) => void
+  isLiking?: boolean
+  onDelete?: (id: number) => void
+  isDeleting?: boolean
   isLoading: boolean
+  showLike?: boolean
+  showDelete?: boolean
 }
 
 const MurmurList: React.FC<Props> = ({
@@ -20,11 +24,14 @@ const MurmurList: React.FC<Props> = ({
   onPageChange,
   onLike,
   isLiking,
+  onDelete,
+  isDeleting,
   isLoading,
 }) => {
   if (isLoading) {
     return <div>Loading...</div>
   }
+
   if (murmurs.length === 0) {
     return (
       <Typography
@@ -33,7 +40,7 @@ const MurmurList: React.FC<Props> = ({
         mt={10}
         color="text.secondary"
       >
-        No murmurs yet. Be the first to post!
+        No murmurs yet.
       </Typography>
     )
   }
@@ -46,7 +53,9 @@ const MurmurList: React.FC<Props> = ({
             key={murmur.id}
             murmur={murmur}
             onLike={onLike}
-            isLiking={isLiking}
+            isLiking={!!isLiking}
+            onDelete={onDelete}
+            isDeleting={!!isDeleting}
           />
         ))}
       </Stack>

@@ -10,15 +10,24 @@ import {
   Paper,
 } from '@mui/material'
 import ThumbUpIcon from '@mui/icons-material/ThumbUp'
+import DeleteIcon from '@mui/icons-material/Delete'
 import { Murmur } from '../utils/interfaces'
 
 interface Props {
   murmur: Murmur
-  onLike: (id: number) => void
-  isLiking: boolean
+  onLike?: (id: number) => void
+  isLiking?: boolean
+  onDelete?: (id: number) => void
+  isDeleting?: boolean
 }
 
-const MurmurCard: React.FC<Props> = ({ murmur, onLike, isLiking }) => {
+const MurmurCard: React.FC<Props> = ({
+  murmur,
+  onLike,
+  isLiking = false,
+  onDelete,
+  isDeleting = false,
+}) => {
   return (
     <Paper
       elevation={1}
@@ -61,25 +70,40 @@ const MurmurCard: React.FC<Props> = ({ murmur, onLike, isLiking }) => {
             alignItems="center"
             spacing={1}
           >
-            <Tooltip title={`${murmur.totalLikes} Likes`}>
-              <Typography
-                variant="caption"
-                color={
-                  murmur.totalLikes > 0 ? 'primary' : 'text.secondary'
-                }
-                sx={{ cursor: 'pointer',pt:.7 }}
+            {onLike && (
+              <>
+                <Tooltip title={`${murmur.totalLikes} Likes`}>
+                  <Typography
+                    variant="caption"
+                    color={
+                      murmur.totalLikes > 0 ? 'primary' : 'text.secondary'
+                    }
+                    sx={{ cursor: 'pointer', pt: 0.7 }}
+                  >
+                    {murmur.totalLikes}
+                  </Typography>
+                </Tooltip>
+                <IconButton
+                  onClick={() => onLike?.(murmur.id)}
+                  color={murmur.isLiked ? 'primary' : 'default'}
+                  size="small"
+                  disabled={isLiking}
+                >
+                  <ThumbUpIcon fontSize="small" />
+                </IconButton>
+              </>
+            )}
+
+            {onDelete && (
+              <IconButton
+                onClick={() => onDelete?.(murmur.id)}
+                color="error"
+                size="small"
+                disabled={isDeleting}
               >
-                {murmur.totalLikes}
-              </Typography>
-            </Tooltip>
-            <IconButton
-              onClick={() => onLike(murmur.id)}
-              color={murmur.isLiked ? 'primary' : 'default'}
-              size="small"
-              disabled={isLiking}
-            >
-              <ThumbUpIcon fontSize="small" />
-            </IconButton>
+                <DeleteIcon fontSize="small" />
+              </IconButton>
+            )}
           </Stack>
         </Box>
       </Stack>
