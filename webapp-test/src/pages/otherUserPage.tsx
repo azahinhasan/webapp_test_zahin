@@ -1,25 +1,22 @@
 import { FC, useEffect, useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import {
-  Box,
-  Typography,
-  Card,
-  CardContent,
-  Stack,
-  Divider,
-  Skeleton,
-  Button,
-  Pagination,
-} from '@mui/material'
-import { getOtherUserInfo, getUserMurmurs, followUser } from '../utils/api'
+import { Box, Typography, Skeleton, Button, Divider } from '@mui/material'
 import { useNavigate, useParams } from 'react-router-dom'
+import {
+  getOtherUserInfo,
+  getUserMurmurs,
+  followUser,
+  toggleLike,
+} from '../utils/api'
 import { Murmur, User } from '../utils/interfaces'
+import MurmurList from '../components/MurmurList'
 
 const OtherUserPage: FC = () => {
   const { userId } = useParams<{ userId: string }>()
+  const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [page, setPage] = useState(1)
-  const navigate = useNavigate()
+  const [isFollowing, setIsFollowing] = useState<boolean>(false)
 
   if (!userId || isNaN(Number(userId))) {
     return (
@@ -35,6 +32,12 @@ const OtherUserPage: FC = () => {
 
   const userIdNum = Number(userId)
 
+  const likeMutation = useMutation({
+    mutationFn: toggleLike,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['userMurmurs', page] })
+    },
+  })
   const {
     data: userResponse,
     isPending: userLoading,
@@ -59,13 +62,11 @@ const OtherUserPage: FC = () => {
   const murmurs: Murmur[] = murmursResponse?.data?.data || []
   const totalPages = murmursResponse?.data?.totalPages || 1
 
-  const [isFollowing, setIsFollowing] = useState<boolean>(false)
-
   useEffect(() => {
     if (user?.isCurrentUser) {
-      navigate('/user/me')
+      navigate('/my-profile')
     }
-    if (user && typeof user.isFollowing === 'boolean') {
+    if (typeof user?.isFollowing === 'boolean') {
       setIsFollowing(user.isFollowing)
     }
   }, [user])
@@ -80,7 +81,7 @@ const OtherUserPage: FC = () => {
 
   return (
     <Box sx={{ maxWidth: 700, mx: 'auto', mt: 8, px: 2 }}>
-      {/* User info */}
+      {/* User Info */}
       <Box sx={{ mb: 4, textAlign: 'center' }}>
         {userLoading ? (
           <>
@@ -132,85 +133,15 @@ const OtherUserPage: FC = () => {
 
       <Divider sx={{ mb: 4 }} />
 
-      {/* Murmurs list */}
-      {murmursLoading ? (
-        <Stack spacing={3}>
-          {[1, 2, 3].map((i) => (
-            <Skeleton
-              key={i}
-              variant="rectangular"
-              height={80}
-              sx={{ borderRadius: 2 }}
-            />
-          ))}
-        </Stack>
-      ) : murmursError ? (
-        <Typography color="error" sx={{ textAlign: 'center' }}>
-          Failed to load user's murmurs.
-        </Typography>
-      ) : murmurs.length === 0 ? (
-        <Typography textAlign="center" color="text.secondary">
-          This user hasn't posted any murmurs yet.
-        </Typography>
-      ) : (
-        <>
-          <Stack spacing={3} sx={{ mb: 4 }}>
-            {murmurs.map((murmur) => (
-              <Card
-                key={murmur.id}
-                sx={{
-                  boxShadow: 3,
-                  borderRadius: 2,
-                  transition: 'transform 0.15s ease-in-out',
-                  '&:hover': {
-                    transform: 'scale(1.02)',
-                    boxShadow: 6,
-                  },
-                }}
-                role="article"
-                aria-label={`Murmur posted on ${new Date(murmur.createdAt).toLocaleDateString()}`}
-                title={murmur.content}
-              >
-                <CardContent>
-                  <Typography
-                    variant="body1"
-                    sx={{ whiteSpace: 'pre-line', mb: 1 }}
-                  >
-                    {murmur.content}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {new Date(murmur.createdAt).toLocaleDateString(undefined, {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric',
-                    })}{' '}
-                    at{' '}
-                    {new Date(murmur.createdAt).toLocaleTimeString(undefined, {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                  </Typography>
-                </CardContent>
-              </Card>
-            ))}
-          </Stack>
-
-          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
-            <Pagination
-              count={totalPages}
-              page={page}
-              onChange={(_, value) => setPage(value)}
-              color="primary"
-              shape="rounded"
-              size="large"
-              showFirstButton
-              showLastButton
-              disabled={murmursLoading}
-              aria-label="Murmurs pagination"
-            />
-          </Box>
-        </>
-      )}
+      <MurmurList
+        murmurs={murmurs}
+        currentPage={page}
+        isLoading={murmursLoading}
+        totalPages={totalPages}
+        onPageChange={setPage}
+        onLike={(id) => likeMutation.mutate(id)}
+        isLiking={likeMutation.isPending}
+      />
     </Box>
   )
 }
