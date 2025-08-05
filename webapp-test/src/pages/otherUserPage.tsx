@@ -32,10 +32,20 @@ const OtherUserPage: FC = () => {
 
   const userIdNum = Number(userId)
 
+  const {
+    data: murmursResponse,
+    isPending: murmursLoading,
+    isError: murmursError,
+  } = useQuery({
+    queryKey: ['userMurmurs', userIdNum, page],
+    queryFn: () => getUserMurmurs(userIdNum, page),
+    staleTime: 5 * 60 * 1000,
+  })
+
   const likeMutation = useMutation({
     mutationFn: toggleLike,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userMurmurs', page] })
+      queryClient.invalidateQueries({ queryKey: ['userMurmurs'] })
     },
   })
   const {
@@ -45,16 +55,6 @@ const OtherUserPage: FC = () => {
   } = useQuery({
     queryKey: ['user', userIdNum],
     queryFn: () => getOtherUserInfo(userIdNum),
-    staleTime: 5 * 60 * 1000,
-  })
-
-  const {
-    data: murmursResponse,
-    isPending: murmursLoading,
-    isError: murmursError,
-  } = useQuery({
-    queryKey: ['userMurmurs', userIdNum, page],
-    queryFn: () => getUserMurmurs(userIdNum, page),
     staleTime: 5 * 60 * 1000,
   })
 
