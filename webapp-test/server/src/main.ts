@@ -5,15 +5,18 @@ import * as cors from "cors";
 import * as cookieParser from "cookie-parser";
 import { ValidationPipe } from "@nestjs/common";
 import { ResponseMessageInterceptor } from "./common/interceptor/response-message.interceptor";
-import * as csurf from 'csurf'
+import * as csurf from "csurf";
+import { ConfigService } from "@nestjs/config";
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
 
   // ミドルウェアの設定
   app.use(helmet());
   app.use(cors());
   app.useGlobalInterceptors(new ResponseMessageInterceptor());
-  app.use(cookieParser("test-secret"));
+  app.use(cookieParser(configService.get<string>("jwt.secret")));
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -24,7 +27,7 @@ async function bootstrap() {
       cookie: {
         httpOnly: true,
         sameSite: "strict",
-        secure: process.env.NODE_ENV === 'production',
+        secure: process.env.NODE_ENV === "production",
       },
     })
   );
