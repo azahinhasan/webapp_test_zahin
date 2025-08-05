@@ -14,7 +14,7 @@ services:
       - ./conf/my.cnf:/etc/mysql/conf.d/my.cnf
       - ./data:/var/lib/mysql
     ports:
-      - 3306:3306
+      - 4307:3306
     security_opt:
       - seccomp:unconfined
 volumes:

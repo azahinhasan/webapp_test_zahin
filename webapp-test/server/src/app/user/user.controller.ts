@@ -1,7 +1,7 @@
 import { Controller, Post, UseGuards, Body, Param, Get, Patch } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { GetIssuer } from "../../common/decorators/get-issuer.decorator";
-import { CsrfGuard } from "../../guards/csrf-guard";
+import { CsrfGuard } from "../../guards/auth-guard";
 import { getIssuer } from "../../common/dtos/index.dto";
 
 @Controller("users")

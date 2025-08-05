@@ -7,13 +7,87 @@
 	},
 	"item": [
 		{
+			"name": "Generate CSRF token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"const newCsrfToken = jsonData.csrfToken;\r",
+							"\r",
+							"pm.collectionVariables.set(\"csrf-token\", newCsrfToken);\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-csrf-token",
+						"value": "{{csrf-token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/v1/auth/csrf-token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"csrf-token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Signup",
 			"request": {
 				"method": "POST",
-				"header": [],
+				"header": [
+					{
+						"key": "x-csrf-token",
+						"value": "{{csrf-token}}",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"email\": \"test@example.com\",\r\n  \"password\": \"SecurePass123\"\r\n}\r\n",
+					"raw": "{\r\n  \"email\": \"test@example.com\",\r\n  \"password\": \"SecurePass123\",\r\n  \"name\":\"test\"\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -39,9 +113,31 @@
 		},
 		{
 			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"const accessToken = jsonData.accessToken;\r",
+							"\r",
+							"pm.collectionVariables.set(\"token\", accessToken);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
-				"header": [],
+				"header": [
+					{
+						"key": "x-csrf-token",
+						"value": "{{csrf-token}}",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\r\n  \"email\": \"test@example.com\",\r\n  \"password\": \"SecurePass123\"\r\n}\r\n",
@@ -75,12 +171,12 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJpYXQiOjE3NTQzMjY5MzUsImV4cCI6MTc1NjkxODkzNX0.eNnVbZckFJVOBQdi3SmvYhcBPEjL0EwcLVD0vi3LcLQ",
+						"value": "Bearer {{token}}",
 						"type": "text"
 					},
 					{
-						"key": "X-CSRF-Token",
-						"value": "MTpqb2huLmRvZUBleGFtcGxlLmNvbTpmNWJiMDU0OTgzZDVjYjU2NTNmMGNhNWY4NDIxM2Y5NDo5NTUwMDUxYTcwOTQ5ZTE3NDhiODI4OTNjODlhNGJhNWE4ZWJmMzBjYjFjNDJhZjc1YTMyZDBkZDYzYzJkMGEx",
+						"key": "x-csrf-token",
+						"value": "{{csrf-token}}",
 						"type": "text"
 					}
 				],
@@ -116,12 +212,12 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJpYXQiOjE3NTQzMjY5MzUsImV4cCI6MTc1NjkxODkzNX0.eNnVbZckFJVOBQdi3SmvYhcBPEjL0EwcLVD0vi3LcLQ",
+						"value": "Bearer {{token}}",
 						"type": "text"
 					},
 					{
-						"key": "X-CSRF-Token",
-						"value": "MTpqb2huLmRvZUBleGFtcGxlLmNvbTpmNWJiMDU0OTgzZDVjYjU2NTNmMGNhNWY4NDIxM2Y5NDo5NTUwMDUxYTcwOTQ5ZTE3NDhiODI4OTNjODlhNGJhNWE4ZWJmMzBjYjFjNDJhZjc1YTMyZDBkZDYzYzJkMGEx",
+						"key": "x-csrf-token",
+						"value": "{{csrf-token}}",
 						"type": "text"
 					}
 				],
@@ -162,12 +258,12 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJpYXQiOjE3NTQzMjY5MzUsImV4cCI6MTc1NjkxODkzNX0.eNnVbZckFJVOBQdi3SmvYhcBPEjL0EwcLVD0vi3LcLQ",
+						"value": "Bearer {{token}}",
 						"type": "text"
 					},
 					{
-						"key": "X-CSRF-Token",
-						"value": "MTpqb2huLmRvZUBleGFtcGxlLmNvbTpmNWJiMDU0OTgzZDVjYjU2NTNmMGNhNWY4NDIxM2Y5NDo5NTUwMDUxYTcwOTQ5ZTE3NDhiODI4OTNjODlhNGJhNWE4ZWJmMzBjYjFjNDJhZjc1YTMyZDBkZDYzYzJkMGEx",
+						"key": "x-csrf-token",
+						"value": "{{csrf-token}}",
 						"type": "text"
 					}
 				],
@@ -181,7 +277,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3001/api/v1/murmurs?page=2",
+					"raw": "http://localhost:3001/api/v1/murmurs?page=1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -195,7 +291,7 @@
 					"query": [
 						{
 							"key": "page",
-							"value": "2"
+							"value": "1"
 						}
 					]
 				}
@@ -212,12 +308,12 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJpYXQiOjE3NTQzMjY5MzUsImV4cCI6MTc1NjkxODkzNX0.eNnVbZckFJVOBQdi3SmvYhcBPEjL0EwcLVD0vi3LcLQ",
+						"value": "Bearer {{token}}",
 						"type": "text"
 					},
 					{
-						"key": "X-CSRF-Token",
-						"value": "MTpqb2huLmRvZUBleGFtcGxlLmNvbTpmNWJiMDU0OTgzZDVjYjU2NTNmMGNhNWY4NDIxM2Y5NDo5NTUwMDUxYTcwOTQ5ZTE3NDhiODI4OTNjODlhNGJhNWE4ZWJmMzBjYjFjNDJhZjc1YTMyZDBkZDYzYzJkMGEx",
+						"key": "x-csrf-token",
+						"value": "{{csrf-token}}",
 						"type": "text"
 					}
 				],
@@ -242,6 +338,13 @@
 						"v1",
 						"murmurs",
 						"1"
+					],
+					"query": [
+						{
+							"key": "x-csrf-token",
+							"value": null,
+							"disabled": true
+						}
 					]
 				}
 			},
@@ -257,12 +360,12 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJpYXQiOjE3NTQzMjY5MzUsImV4cCI6MTc1NjkxODkzNX0.eNnVbZckFJVOBQdi3SmvYhcBPEjL0EwcLVD0vi3LcLQ",
+						"value": "Bearer {{token}}",
 						"type": "text"
 					},
 					{
-						"key": "X-CSRF-Token",
-						"value": "MTpqb2huLmRvZUBleGFtcGxlLmNvbTpmNWJiMDU0OTgzZDVjYjU2NTNmMGNhNWY4NDIxM2Y5NDo5NTUwMDUxYTcwOTQ5ZTE3NDhiODI4OTNjODlhNGJhNWE4ZWJmMzBjYjFjNDJhZjc1YTMyZDBkZDYzYzJkMGEx",
+						"key": "x-csrf-token",
+						"value": "{{csrf-token}}",
 						"type": "text"
 					}
 				],
@@ -308,12 +411,12 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJpYXQiOjE3NTQzMjY5MzUsImV4cCI6MTc1NjkxODkzNX0.eNnVbZckFJVOBQdi3SmvYhcBPEjL0EwcLVD0vi3LcLQ",
+						"value": "Bearer {{token}}",
 						"type": "text"
 					},
 					{
 						"key": "X-CSRF-Token",
-						"value": "MTpqb2huLmRvZUBleGFtcGxlLmNvbTpmNWJiMDU0OTgzZDVjYjU2NTNmMGNhNWY4NDIxM2Y5NDo5NTUwMDUxYTcwOTQ5ZTE3NDhiODI4OTNjODlhNGJhNWE4ZWJmMzBjYjFjNDJhZjc1YTMyZDBkZDYzYzJkMGEx",
+						"value": "{{csrf-token}}",
 						"type": "text"
 					}
 				],
@@ -339,6 +442,13 @@
 						"murmurs",
 						"user",
 						"1"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
 					]
 				}
 			},
@@ -354,12 +464,12 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJpYXQiOjE3NTQzMjY5MzUsImV4cCI6MTc1NjkxODkzNX0.eNnVbZckFJVOBQdi3SmvYhcBPEjL0EwcLVD0vi3LcLQ",
+						"value": "Bearer {{token}}",
 						"type": "text"
 					},
 					{
-						"key": "X-CSRF-Token",
-						"value": "MTpqb2huLmRvZUBleGFtcGxlLmNvbTpmNWJiMDU0OTgzZDVjYjU2NTNmMGNhNWY4NDIxM2Y5NDo5NTUwMDUxYTcwOTQ5ZTE3NDhiODI4OTNjODlhNGJhNWE4ZWJmMzBjYjFjNDJhZjc1YTMyZDBkZDYzYzJkMGEx",
+						"key": "x-csrf-token",
+						"value": "{{csrf-token}}",
 						"type": "text"
 					}
 				],
@@ -399,12 +509,12 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJpYXQiOjE3NTQzMjY5MzUsImV4cCI6MTc1NjkxODkzNX0.eNnVbZckFJVOBQdi3SmvYhcBPEjL0EwcLVD0vi3LcLQ",
+						"value": "Bearer {{token}}",
 						"type": "text"
 					},
 					{
-						"key": "X-CSRF-Token",
-						"value": "MTpqb2huLmRvZUBleGFtcGxlLmNvbTpmNWJiMDU0OTgzZDVjYjU2NTNmMGNhNWY4NDIxM2Y5NDo5NTUwMDUxYTcwOTQ5ZTE3NDhiODI4OTNjODlhNGJhNWE4ZWJmMzBjYjFjNDJhZjc1YTMyZDBkZDYzYzJkMGEx",
+						"key": "x-csrf-token",
+						"value": "{{csrf-token}}",
 						"type": "text"
 					}
 				],
@@ -441,12 +551,12 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJpYXQiOjE3NTQzMjY5MzUsImV4cCI6MTc1NjkxODkzNX0.eNnVbZckFJVOBQdi3SmvYhcBPEjL0EwcLVD0vi3LcLQ",
+						"value": "Bearer {{token}}",
 						"type": "text"
 					},
 					{
 						"key": "X-CSRF-Token",
-						"value": "MTpqb2huLmRvZUBleGFtcGxlLmNvbTpmNWJiMDU0OTgzZDVjYjU2NTNmMGNhNWY4NDIxM2Y5NDo5NTUwMDUxYTcwOTQ5ZTE3NDhiODI4OTNjODlhNGJhNWE4ZWJmMzBjYjFjNDJhZjc1YTMyZDBkZDYzYzJkMGEx",
+						"value": "{{csrf-token}}",
 						"type": "text"
 					}
 				],
@@ -476,6 +586,40 @@
 				}
 			},
 			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "csrf-token",
+			"value": "Pl3Bz7du-rb_TBUAzIRKGzS4xqvS46tt8ZNo",
+			"type": "default"
+		},
+		{
+			"key": "token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJpYXQiOjE3NTQzMjY5MzUsImV4cCI6MTc1NjkxODkzNX0.eNnVbZckFJVOBQdi3SmvYhcBPEjL0EwcLVD0vi3LcLQ",
+			"type": "string"
 		}
 	]
 }

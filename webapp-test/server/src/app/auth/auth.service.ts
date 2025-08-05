@@ -9,7 +9,6 @@ import { User } from "../../entities/user.entity";
 import { Repository } from "typeorm";
 import * as bcrypt from "bcrypt";
 import { JwtService } from "@nestjs/jwt";
-import { generateCsrfToken } from "../../utils/csrf-token";
 
 @Injectable()
 export class AuthService {
@@ -55,11 +54,10 @@ export class AuthService {
       };
       const jwtToken = await this.jwtService.signAsync(payload);
 
-      const csrfToken = generateCsrfToken({ id: user.id, name: user.name });
-
-      return { accessToken: jwtToken, csrfToken };
+      return { accessToken: jwtToken };
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
   }
+  
 }

@@ -1,11 +1,11 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import helmet from "helmet";
-import * as cors from 'cors';
+import * as cors from "cors";
 import * as cookieParser from "cookie-parser";
 import { ValidationPipe } from "@nestjs/common";
 import { ResponseMessageInterceptor } from "./common/interceptor/response-message.interceptor";
-
+import * as csurf from 'csurf'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -16,10 +16,19 @@ async function bootstrap() {
   app.use(cookieParser("test-secret"));
   app.useGlobalPipes(
     new ValidationPipe({
-      transform: true
+      transform: true,
     })
   );
-  app.setGlobalPrefix('api/v1');
+  app.use(
+    csurf({
+      cookie: {
+        httpOnly: true,
+        sameSite: "strict",
+        secure: process.env.NODE_ENV === 'production',
+      },
+    })
+  );
+  app.setGlobalPrefix("api/v1");
   await app.listen(3001);
   console.log("Example app listening on port 3001!");
 }
