@@ -1,4 +1,6 @@
 import axios from 'axios'
+import { LoginPayload, SignupPayload } from './interfaces'
+import Cookies from 'js-cookie'
 
 const api_v1 = axios.create({
   baseURL: '/api/v1',
@@ -8,12 +10,27 @@ const api_v1 = axios.create({
   },
 })
 
-// Auth
-export const signup = (data: { email: string; password: string }) =>
-  api_v1.post('/auth/signup', data)
+api_v1.interceptors.request.use((config) => {
+  config.headers.set('X-CSRF-Token', Cookies.get('csrf-token'))
+  if (
+    config.url?.endsWith('/auth/login') ||
+    config.url?.endsWith('/auth/signup') ||
+    config.url?.endsWith('/auth/csrf-token')
+  ) {
+    return config
+  }
 
-export const login = (data: { email: string; password: string }) =>
-  api_v1.post('/auth/login', data)
+  config.headers.set('Authorization', `Bearer ${Cookies.get('access-token')}`)
+
+  return config
+})
+
+// Auth
+export const csrfToken = () => api_v1.get('/auth/csrf-token')
+
+export const signup = (data: SignupPayload) => api_v1.post('/auth/signup', data)
+
+export const login = (data: LoginPayload) => api_v1.post('/auth/login', data)
 
 // Murmurs
 export const createMurmur = (data: { content: string }) =>
@@ -39,4 +56,4 @@ export const getOtherUserInfo = (id: number) => api_v1.get(`/users/${id}`)
 
 export const followUser = (id: number) => api_v1.patch(`/users/${id}/follow`)
 
-export default api_v1;
+export default api_v1

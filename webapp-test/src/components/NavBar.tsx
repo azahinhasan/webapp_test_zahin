@@ -21,8 +21,8 @@ const NavBar: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false)
 
   const handleLogout = () => {
-    Cookies.remove('token')
-    Cookies.remove('csrfToken')
+    Cookies.remove('access-token')
+    Cookies.remove('csrf-token')
     window.location.reload()
   }
 

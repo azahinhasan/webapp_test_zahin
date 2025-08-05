@@ -1,3 +1,19 @@
+export interface LoginPayload {
+  email: string
+  password: string
+}
+
+export interface SignupPayload {
+  email: string
+  password: string
+  name:string
+}
+
+
+export interface LoginResponseData {
+  accessToken: string
+  csrfToken: string
+}
 export interface User {
   id: number
   name: string
@@ -9,12 +25,18 @@ export interface User {
 export interface Murmur {
   id: number
   content: string
-  likeCount: number
-  userId: number
+  isLiked: boolean
+  user: {
+    id: number
+    name: string
+  } | null
   createdAt: string
-  updatedAt: string
 }
 
+export interface MurmurResponse {
+  data: Murmur[]
+  count: number
+}
 export interface AuthResponse {
   token: string
   csrfToken: string
@@ -42,4 +64,3 @@ export interface Like {
 export interface Follow {
   id: number
 }
-
