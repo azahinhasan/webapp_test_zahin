@@ -14,6 +14,7 @@ import SignupPage from './pages/signupPage'
 import { CssBaseline, Container } from '@mui/material'
 import TimelinePage from './pages/timelinePage'
 import { csrfToken } from './utils/api'
+import OtherUserPage from './pages/otherUserPage'
 
 const queryClient = new QueryClient()
 
@@ -47,6 +48,14 @@ const AppRoutes = () => {
             element={
               <PrivateRoute>
                 <TimelinePage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/user/:userId"
+            element={
+              <PrivateRoute>
+                <OtherUserPage />
               </PrivateRoute>
             }
           />

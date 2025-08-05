@@ -53,16 +53,20 @@ export class UserService {
     }
   }
 
-  async getUserInfo(userId: number) {
+  async getUserInfo(userId: number, otherUserId: number) {
     try {
-      const user = await this.userRepo.findOne({ where: { id: userId } });
+      const user = await this.userRepo.findOne({ where: { id: otherUserId } });
       if (!user) throw new NotFoundException("User not found");
 
       const followCount = await this.followRepo.count({
-        where: { follower: { id: userId } },
+        where: { follower: { id: otherUserId } },
       });
       const followedCount = await this.followRepo.count({
-        where: { following: { id: userId } },
+        where: { following: { id: otherUserId } },
+      });
+
+      const isFollowing = await this.followRepo.findOne({
+        where: { follower: { id: userId }, following: { id: otherUserId } },
       });
 
       return {
@@ -70,6 +74,8 @@ export class UserService {
         name: user.name,
         followCount,
         followedCount,
+        isFollowing: Boolean(isFollowing),
+        isCurrentUser: userId === otherUserId,
       };
     } catch (error) {
       throw new InternalServerErrorException(error.message);

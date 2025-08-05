@@ -1,4 +1,12 @@
-import { Controller, Post, UseGuards, Body, Param, Get, Patch } from "@nestjs/common";
+import {
+  Controller,
+  Post,
+  UseGuards,
+  Body,
+  Param,
+  Get,
+  Patch,
+} from "@nestjs/common";
 import { UserService } from "./user.service";
 import { GetIssuer } from "../../common/decorators/get-issuer.decorator";
 import { CsrfGuard } from "../../guards/auth-guard";
@@ -17,11 +25,12 @@ export class UserController {
   @Get("me")
   @UseGuards(CsrfGuard)
   getMyInfo(@GetIssuer() issuer: getIssuer) {
-    return this.userService.getUserInfo(issuer.user.sub);
+    return this.userService.getUserInfo(null, issuer.user.sub);
   }
 
   @Get(":id")
-  getUserInfo(@Param("id") id: number) {
-    return this.userService.getUserInfo(id);
+  @UseGuards(CsrfGuard)
+  getUserInfo(@GetIssuer() issuer: getIssuer, @Param("id") id: number) {
+    return this.userService.getUserInfo(issuer.user.sub, id);
   }
 }

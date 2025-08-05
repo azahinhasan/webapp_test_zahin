@@ -46,8 +46,8 @@ export const getMurmurDetails = (id: number) => api_v1.get(`/murmurs/${id}`)
 export const getMyMurmurs = (page: number) =>
   api_v1.get(`/murmurs/me?page=${page}`)
 
-export const getUserMurmurs = (userId: number) =>
-  api_v1.get(`/murmurs/user/${userId}`)
+export const getUserMurmurs = (userId: number, page: number) =>
+  api_v1.get(`/murmurs/user/${userId}?page=${page}`)
 
 // Users
 export const getMyUserInfo = () => api_v1.get('/users/me')
