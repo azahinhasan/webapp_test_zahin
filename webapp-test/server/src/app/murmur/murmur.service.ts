@@ -63,7 +63,7 @@ export class MurmurService {
 
       const murmurIds = murmurs.map((m) => m.id);
       if (murmurIds.length === 0) {
-        return { data: [], count };
+        return { data: [], count};
       }
 
       const likes = await this.likeRepo.find({
