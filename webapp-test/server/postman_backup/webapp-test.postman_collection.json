@@ -21,13 +21,15 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3001/auth/signup",
+					"raw": "http://localhost:3001/api/v1/auth/signup",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "3001",
 					"path": [
+						"api",
+						"v1",
 						"auth",
 						"signup"
 					]
@@ -42,7 +44,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"email\": \"john.doe@example.com\",\r\n  \"password\": \"SecurePass123\"\r\n}\r\n",
+					"raw": "{\r\n  \"email\": \"test@example.com\",\r\n  \"password\": \"SecurePass123\"\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -50,13 +52,15 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3001/auth/login",
+					"raw": "http://localhost:3001/api/v1/auth/login",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "3001",
 					"path": [
+						"api",
+						"v1",
 						"auth",
 						"login"
 					]
@@ -90,13 +94,15 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3001/murmurs",
+					"raw": "http://localhost:3001/api/v1/murmurs",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "3001",
 					"path": [
+						"api",
+						"v1",
 						"murmurs"
 					]
 				}
@@ -129,13 +135,15 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3001/murmurs/1/toggle-like",
+					"raw": "http://localhost:3001/api/v1/murmurs/1/toggle-like",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "3001",
 					"path": [
+						"api",
+						"v1",
 						"murmurs",
 						"1",
 						"toggle-like"
@@ -173,13 +181,15 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3001/murmurs?page=2",
+					"raw": "http://localhost:3001/api/v1/murmurs?page=2",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "3001",
 					"path": [
+						"api",
+						"v1",
 						"murmurs"
 					],
 					"query": [
@@ -221,13 +231,15 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3001/murmurs/1",
+					"raw": "http://localhost:3001/api/v1/murmurs/1",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "3001",
 					"path": [
+						"api",
+						"v1",
 						"murmurs",
 						"1"
 					]
@@ -264,13 +276,15 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3001/murmurs/me?page=1",
+					"raw": "http://localhost:3001/api/v1/murmurs/me?page=1",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "3001",
 					"path": [
+						"api",
+						"v1",
 						"murmurs",
 						"me"
 					],
@@ -313,13 +327,15 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3001/murmurs/user/1",
+					"raw": "http://localhost:3001/api/v1/murmurs/user/1",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "3001",
 					"path": [
+						"api",
+						"v1",
 						"murmurs",
 						"user",
 						"1"
@@ -357,13 +373,15 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3001/users/me",
+					"raw": "http://localhost:3001/api/v1/users/me",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "3001",
 					"path": [
+						"api",
+						"v1",
 						"users",
 						"me"
 					]
@@ -400,13 +418,15 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3001/users/2",
+					"raw": "http://localhost:3001/api/v1/users/2",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "3001",
 					"path": [
+						"api",
+						"v1",
 						"users",
 						"2"
 					]
@@ -417,7 +437,7 @@
 		{
 			"name": "Follow a User",
 			"request": {
-				"method": "POST",
+				"method": "PATCH",
 				"header": [
 					{
 						"key": "Authorization",
@@ -432,7 +452,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"targetUserId\": 2\r\n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -440,14 +460,17 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3001/users/follow",
+					"raw": "http://localhost:3001/api/v1/users/2/follow",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "3001",
 					"path": [
+						"api",
+						"v1",
 						"users",
+						"2",
 						"follow"
 					]
 				}
