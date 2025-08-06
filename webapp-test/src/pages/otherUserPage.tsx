@@ -201,7 +201,7 @@ const OtherUserPage: FC = () => {
             <Skeleton
               variant="text"
               width={220}
-              height={40}
+              height={60}
               sx={{ mx: 'auto' }}
             />
             <Skeleton
@@ -210,11 +210,11 @@ const OtherUserPage: FC = () => {
               height={25}
               sx={{ mx: 'auto', mt: 1 }}
             />
-            <Skeleton
-              variant="rectangular"
-              width={120}
-              height={36}
-              sx={{ mx: 'auto', mt: 2, borderRadius: 1 }}
+              <Skeleton
+              variant="text"
+              width={150}
+              height={55}
+              sx={{ mx: 'auto', mt: 1 }}
             />
           </>
         ) : userError || !user ? (

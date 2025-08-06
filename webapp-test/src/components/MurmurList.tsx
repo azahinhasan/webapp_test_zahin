@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Pagination, Stack, Typography } from '@mui/material'
+import { Box, Pagination, Skeleton, Stack, Typography } from '@mui/material'
 import { Murmur } from '../utils/interfaces'
 import MurmurCard from './MurmurCard'
 
@@ -29,7 +29,7 @@ const MurmurList: React.FC<Props> = ({
   isLoading,
 }) => {
   if (isLoading) {
-    return <div>Loading...</div>
+    return <Skeleton variant="text" height={250} />
   }
 
   if (murmurs.length === 0) {

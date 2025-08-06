@@ -25,13 +25,13 @@ import {
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   getMyUserInfo,
-  getMyMurmurs,
   deleteMurmur,
   followUser,
   getFollowing,
   getFollowers,
+  getUserMurmurs,
 } from '../utils/api'
-import { Murmur, User } from '../utils/interfaces'
+import { User } from '../utils/interfaces'
 import MurmurList from '../components/MurmurList'
 
 const ProfilePage: FC = () => {
@@ -59,7 +59,7 @@ const ProfilePage: FC = () => {
     isError: murmursError,
   } = useQuery({
     queryKey: ['myMurmurs', page],
-    queryFn: () => getMyMurmurs(page),
+    queryFn: () => getUserMurmurs(userRes?.data?.id, page),
   })
 
   const deleteMutation = useMutation({
@@ -236,7 +236,7 @@ const ProfilePage: FC = () => {
             <Skeleton
               variant="text"
               width={220}
-              height={40}
+              height={60}
               sx={{ mx: 'auto' }}
             />
             <Skeleton
@@ -244,12 +244,6 @@ const ProfilePage: FC = () => {
               width={180}
               height={25}
               sx={{ mx: 'auto', mt: 1 }}
-            />
-            <Skeleton
-              variant="rectangular"
-              width={120}
-              height={36}
-              sx={{ mx: 'auto', mt: 2, borderRadius: 1 }}
             />
           </>
         ) : userError || !userRes ? (
@@ -278,9 +272,7 @@ const ProfilePage: FC = () => {
       <Divider sx={{ mb: 4 }} />
 
       {tab === 0 &&
-        (murmursLoading ? (
-          <CircularProgress />
-        ) : murmursError ? (
+        (murmursError ? (
           <Typography variant="h6" color="error" textAlign="center" mt={5}>
             Failed to load murmurs.
           </Typography>

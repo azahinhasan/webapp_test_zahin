@@ -40,19 +40,6 @@ export class MurmurController {
   toggleLike(@GetIssuer() issuer: getIssuer, @Param("id") id: number) {
     return this.murmurService.toggleLikeMurmur(issuer.user.sub, id);
   }
-
-  @Get("me")
-  myMurmurs(
-    @Query() pagination: PaginationDto,
-    @GetIssuer() issuer: getIssuer
-  ) {
-    return this.murmurService.getMurmursByUser(
-      pagination,
-      issuer.user.sub,
-      issuer.user.sub
-    );
-  }
-
   @Get("user/:userId")
   getUserMurmurs(
     @Query() pagination: PaginationDto,
