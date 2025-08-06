@@ -7,18 +7,21 @@ import {
   Typography,
   Alert,
   CircularProgress,
+  InputAdornment,
+  IconButton,
 } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import { login } from '../utils/api'
 import type { AxiosError } from 'axios'
 import { LoginPayload } from '../utils/interfaces'
 import Cookies from 'js-cookie'
-
+import { Visibility, VisibilityOff } from '@mui/icons-material'
 const LoginPage: React.FC = () => {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errorMsg, setErrorMsg] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
 
   const mutation = useMutation({
     mutationFn: (data: LoginPayload) => login(data),
@@ -40,6 +43,13 @@ const LoginPage: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     mutation.mutate({ email, password })
+  }
+
+  const handleClickShowPassword = () => setShowPassword((prev) => !prev)
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    event.preventDefault()
   }
 
   return (
@@ -72,13 +82,27 @@ const LoginPage: React.FC = () => {
         />
         <TextField
           label="Password"
-          type="password"
+          type={showPassword ? 'text' : 'password'}
           required
           fullWidth
           margin="normal"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           disabled={mutation.isPending}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={handleClickShowPassword}
+                  onMouseDown={handleMouseDownPassword}
+                  edge="end"
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
         />
         <Button
           type="submit"

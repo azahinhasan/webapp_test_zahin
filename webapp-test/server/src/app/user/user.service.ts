@@ -8,7 +8,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { User } from "../../entities/user.entity";
 import { Follow } from "../../entities/follow.entity";
-import { ToggleFollowResponseDto, UserInfoResponseDto } from "./dto/user.dto";
+import { PaginationDto } from "src/common/dtos/pagination.dto";
 
 @Injectable()
 export class UserService {
@@ -19,10 +19,7 @@ export class UserService {
     private followRepo: Repository<Follow>
   ) {}
 
-  async toggleFollowUser(
-    followerId: number,
-    followingId: number
-  ): Promise<ToggleFollowResponseDto> {
+  async toggleFollowUser(followerId: number, followingId: number) {
     try {
       if (followerId === followingId)
         throw new ConflictException("Cannot follow yourself");
@@ -57,71 +54,98 @@ export class UserService {
     }
   }
 
-  async getUserInfo(
-    userId: number,
-    otherUserId: number
-  ): Promise<UserInfoResponseDto> {
+  async getUserInfo(userId: number, otherUserId: number) {
     try {
       const user = await this.userRepo.findOne({ where: { id: otherUserId } });
       if (!user) throw new NotFoundException("User not found");
 
-      const followerFollows = await this.followRepo.find({
-        where: { following: { id: otherUserId } },
-        relations: ["follower"],
-      });
-
-      const totalFollowed = await Promise.all(
-        followerFollows.map(async (f) => {
-          const isFollowing = await this.followRepo.exists({
-            where: {
-              follower: { id: userId },
-              following: { id: f.follower.id },
-            },
-          });
-          return {
-            ...f.follower,
-            isFollowing,
-            isCurrentUser: userId === f.follower.id,
-          };
-        })
-      );
-
-      const followingFollows = await this.followRepo.find({
+      const followCount = await this.followRepo.count({
         where: { follower: { id: otherUserId } },
-        relations: ["following"],
+      });
+      const followedCount = await this.followRepo.count({
+        where: { following: { id: otherUserId } },
       });
 
-      const totalFollow = await Promise.all(
-        followingFollows.map(async (f) => {
-          const isFollowing = await this.followRepo.exists({
-            where: {
-              follower: { id: userId },
-              following: { id: f.following.id },
-            },
-          });
-          return {
-            ...f.following,
-            isFollowing,
-            isCurrentUser: userId === f.following.id,
-          };
-        })
-      );
-
-      const isFollowing = await this.followRepo.exists({
+      const isFollowing = await this.followRepo.findOne({
         where: { follower: { id: userId }, following: { id: otherUserId } },
       });
 
       return {
         id: user.id,
         name: user.name,
-        totalFollow,
-        totalFollowed,
-        isFollowing,
+        followCount,
+        followedCount,
+        isFollowing: Boolean(isFollowing),
         isCurrentUser: userId === otherUserId,
       };
     } catch (error) {
-      console.log(error);
       throw new InternalServerErrorException(error.message);
     }
+  }
+
+  async getFollowers(
+    userId: number,
+    otherUserId: number,
+    pagination: PaginationDto
+  ) {
+    const { page, limit } = pagination;
+
+    const [followers, total] = await this.followRepo.findAndCount({
+      where: { following: { id: otherUserId } },
+      relations: ["follower"],
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    const data = await Promise.all(
+      followers.map(async (f) => {
+        const isFollowing = await this.followRepo.exists({
+          where: {
+            follower: { id: userId },
+            following: { id: f.follower.id },
+          },
+        });
+        return {
+          ...f.follower,
+          isFollowing,
+          isCurrentUser: userId === f.follower.id,
+        };
+      })
+    );
+
+    return { data, total };
+  }
+
+  async getFollowing(
+    userId: number,
+    otherUserId: number,
+    pagination: PaginationDto
+  ) {
+    const { page, limit } = pagination;
+
+    const [following, total] = await this.followRepo.findAndCount({
+      where: { follower: { id: otherUserId } },
+      relations: ["following"],
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    const data = await Promise.all(
+      following.map(async (f) => {
+        const isFollowing = await this.followRepo.exists({
+          where: {
+            follower: { id: userId },
+            following: { id: f.following.id },
+          },
+        });
+        return {
+          ...f.following,
+          isFollowing,
+          isCurrentUser: userId === f.following.id,
+        };
+      })
+    );
+
+    return { data, total };
   }
 }
