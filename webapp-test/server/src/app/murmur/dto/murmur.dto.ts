@@ -1,4 +1,17 @@
-import { IsString, IsNotEmpty } from "class-validator";
+import { IsString, IsNotEmpty, IsNumber, IsDate, IsBoolean, IsOptional, ValidateNested, IsEmail } from "class-validator";
+import { Type } from "class-transformer";
+
+class UserDto {
+  @IsNumber()
+  id: number;
+
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsEmail()
+  email: string;
+}
 
 export class CreateMurmurDto {
   @IsString()
@@ -6,58 +19,108 @@ export class CreateMurmurDto {
   content: string;
 }
 
-export interface MurmurResponseDto {
+export class MurmurResponseDto {
+  @IsNumber()
   id: number;
+
+  @IsString()
   content: string;
+
+  @IsDate()
+  @Type(() => Date)
   createdAt: Date;
+
+  @IsDate()
+  @Type(() => Date)
   updatedAt: Date;
+
+  @IsOptional()
+  @IsDate()
+  @Type(() => Date)
   deletedAt: Date | null;
-  user: {
-    id: number;
-    name: string;
-    email: string;
-  };
+
+  @ValidateNested()
+  @Type(() => UserDto)
+  user: UserDto;
+
+  @IsBoolean()
   isLiked: boolean;
+
+  @IsNumber()
   totalLikes: number;
 }
 
-export interface CreateMurmurResponseDto {
+export class CreateMurmurResponseDto {
+  @IsNumber()
   id: number;
+
+  @IsString()
   content: string;
+
+  @IsDate()
+  @Type(() => Date)
   createdAt: Date;
+
+  @IsDate()
+  @Type(() => Date)
   updatedAt: Date;
+
+  @IsOptional()
+  @IsDate()
+  @Type(() => Date)
   deletedAt: Date | null;
-  user: {
-    id: number;
-    name: string;
-    email: string;
-  };
+
+  @ValidateNested()
+  @Type(() => UserDto)
+  user: UserDto;
 }
 
-export interface DeleteMurmurResponseDto {
+export class DeleteMurmurResponseDto {
+  @IsString()
   message: string;
 }
 
-export interface ToggleLikeResponseDto {
+export class ToggleLikeResponseDto {
+  @IsString()
   message: string;
 }
 
-export interface MurmurListResponseDto {
+export class MurmurListResponseDto {
+  @ValidateNested({ each: true })
+  @Type(() => MurmurResponseDto)
   data: MurmurResponseDto[];
+
+  @IsNumber()
   count: number;
 }
 
-export interface MurmurDetailResponseDto {
+export class MurmurDetailResponseDto {
+  @IsNumber()
   id: number;
+
+  @IsString()
   content: string;
+
+  @IsDate()
+  @Type(() => Date)
   createdAt: Date;
+
+  @IsDate()
+  @Type(() => Date)
   updatedAt: Date;
+
+  @IsOptional()
+  @IsDate()
+  @Type(() => Date)
   deletedAt: Date | null;
-  user: {
-    id: number;
-    name: string;
-    email: string;
-  };
+
+  @ValidateNested()
+  @Type(() => UserDto)
+  user: UserDto;
+
+  @IsBoolean()
   isLiked: boolean;
+
+  @IsNumber()
   totalLikes: number;
 }

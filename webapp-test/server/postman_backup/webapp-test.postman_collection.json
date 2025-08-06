@@ -87,7 +87,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"email\": \"test@example.com\",\r\n  \"password\": \"SecurePass123\",\r\n  \"name\":\"test\"\r\n}\r\n",
+					"raw": "{\r\n  \"email\": \"test@example.com\",\r\n  \"password\": \"test\",\r\n  \"name\":\"test\"\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -140,7 +140,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"email\": \"test@example.com\",\r\n  \"password\": \"SecurePass123\"\r\n}\r\n",
+					"raw": "{\r\n  \"email\": \"test@gmail.com\",\r\n  \"password\": \"test\"\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -159,6 +159,51 @@
 						"v1",
 						"auth",
 						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get My Info",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					},
+					{
+						"key": "x-csrf-token",
+						"value": "{{csrf-token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"content\": \"This is my first murmur!\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/v1/users/me",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"v1",
+						"users",
+						"me"
 					]
 				}
 			},
@@ -200,49 +245,6 @@
 						"api",
 						"v1",
 						"murmurs"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Toggle Like a Murmur",
-			"request": {
-				"method": "PATCH",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Bearer {{token}}",
-						"type": "text"
-					},
-					{
-						"key": "x-csrf-token",
-						"value": "{{csrf-token}}",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:3001/api/v1/murmurs/1/toggle-like",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3001",
-					"path": [
-						"api",
-						"v1",
-						"murmurs",
-						"1",
-						"toggle-like"
 					]
 				}
 			},
@@ -351,12 +353,9 @@
 			"response": []
 		},
 		{
-			"name": "List My Own Murmurs",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
+			"name": "Toggle Like a Murmur",
 			"request": {
-				"method": "GET",
+				"method": "PATCH",
 				"header": [
 					{
 						"key": "Authorization",
@@ -371,7 +370,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"content\": \"This is my first murmur!\"\r\n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -379,7 +378,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3001/api/v1/murmurs/me?page=1",
+					"raw": "http://localhost:3001/api/v1/murmurs/4/toggle-like",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -389,13 +388,8 @@
 						"api",
 						"v1",
 						"murmurs",
-						"me"
-					],
-					"query": [
-						{
-							"key": "page",
-							"value": "1"
-						}
+						"4",
+						"toggle-like"
 					]
 				}
 			},
@@ -430,7 +424,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3001/api/v1/murmurs/user/1",
+					"raw": "http://localhost:3001/api/v1/murmurs/user/1?page=1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -445,55 +439,9 @@
 					],
 					"query": [
 						{
-							"key": "",
-							"value": "",
-							"disabled": true
+							"key": "page",
+							"value": "1"
 						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get My User Info",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Bearer {{token}}",
-						"type": "text"
-					},
-					{
-						"key": "x-csrf-token",
-						"value": "{{csrf-token}}",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n  \"content\": \"This is my first murmur!\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:3001/api/v1/users/me",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3001",
-					"path": [
-						"api",
-						"v1",
-						"users",
-						"me"
 					]
 				}
 			},
@@ -582,6 +530,110 @@
 						"users",
 						"2",
 						"follow"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get list of following",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					},
+					{
+						"key": "x-csrf-token",
+						"value": "{{csrf-token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"content\": \"This is my first murmur!\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/v1/users/2/following?page=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"v1",
+						"users",
+						"2",
+						"following"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get list of followers",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					},
+					{
+						"key": "x-csrf-token",
+						"value": "{{csrf-token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"content\": \"This is my first murmur!\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/v1/users/2/followers?page=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"v1",
+						"users",
+						"2",
+						"followers"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						}
 					]
 				}
 			},
