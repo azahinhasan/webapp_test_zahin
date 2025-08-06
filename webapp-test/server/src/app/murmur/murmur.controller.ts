@@ -67,7 +67,7 @@ export class MurmurController {
   }
 
   @Get(":id")
-  getDetail(@Param("id") id: number) {
-    return this.murmurService.getMurmurDetail(id);
+  getDetail(@GetIssuer() issuer: getIssuer,@Param("id") id: number) {
+    return this.murmurService.getMurmurDetail(issuer.user.sub,id);
   }
 }

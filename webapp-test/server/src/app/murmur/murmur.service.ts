@@ -179,7 +179,7 @@ export class MurmurService {
     }
   }
 
-  async getMurmurDetail(murmurId: number) {
+  async getMurmurDetail(userId: number, murmurId: number) {
     try {
       const murmur = await this.murmurRepo.findOne({
         where: { id: murmurId },
@@ -187,10 +187,17 @@ export class MurmurService {
       });
       if (!murmur) throw new NotFoundException("Murmur not found");
 
-      const likeCount = await this.likeRepo.count({
+      const totalLikes = await this.likeRepo.count({
         where: { murmur: { id: murmurId } },
       });
-      return { ...murmur, likeCount };
+      const isLiked = await this.likeRepo.find({
+        where: {
+          user: { id: userId },
+          murmur: { id: murmurId },
+        },
+        relations: ["murmur"],
+      });
+      return { ...murmur, totalLikes,isLiked };
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }

@@ -16,7 +16,7 @@ export class Murmur {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
+  @Column("text")
   content!: string;
 
   @ManyToOne(() => User, (user) => user.id, { onDelete: "CASCADE" })

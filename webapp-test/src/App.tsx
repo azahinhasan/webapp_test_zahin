@@ -16,6 +16,7 @@ import TimelinePage from './pages/timelinePage'
 import { csrfToken } from './utils/api'
 import OtherUserPage from './pages/otherUserPage'
 import ProfilePage from './pages/profilePage'
+import MurmurDetailPage from './pages/murmurDetailPage'
 
 const queryClient = new QueryClient()
 
@@ -60,7 +61,15 @@ const AppRoutes = () => {
               </PrivateRoute>
             }
           />
-           <Route
+          <Route
+            path="/murmur/:id"
+            element={
+              <PrivateRoute>
+                <MurmurDetailPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
             path="/my-profile"
             element={
               <PrivateRoute>
