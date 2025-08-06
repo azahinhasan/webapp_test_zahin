@@ -8,6 +8,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { User } from "../../entities/user.entity";
 import { Follow } from "../../entities/follow.entity";
+import { ToggleFollowResponseDto, UserInfoResponseDto } from "./dto/user.dto";
 
 @Injectable()
 export class UserService {
@@ -18,7 +19,10 @@ export class UserService {
     private followRepo: Repository<Follow>
   ) {}
 
-  async toggleFollowUser(followerId: number, followingId: number) {
+  async toggleFollowUser(
+    followerId: number,
+    followingId: number
+  ): Promise<ToggleFollowResponseDto> {
     try {
       if (followerId === followingId)
         throw new ConflictException("Cannot follow yourself");
@@ -53,7 +57,10 @@ export class UserService {
     }
   }
 
-  async getUserInfo(userId: number, otherUserId: number) {
+  async getUserInfo(
+    userId: number,
+    otherUserId: number
+  ): Promise<UserInfoResponseDto> {
     try {
       const user = await this.userRepo.findOne({ where: { id: otherUserId } });
       if (!user) throw new NotFoundException("User not found");
@@ -65,7 +72,7 @@ export class UserService {
         where: { following: { id: otherUserId } },
       });
 
-      const isFollowing = await this.followRepo.findOne({
+      const isFollowing = await this.followRepo.exists({
         where: { follower: { id: userId }, following: { id: otherUserId } },
       });
 
@@ -74,7 +81,7 @@ export class UserService {
         name: user.name,
         followCount,
         followedCount,
-        isFollowing: Boolean(isFollowing),
+        isFollowing,
         isCurrentUser: userId === otherUserId,
       };
     } catch (error) {

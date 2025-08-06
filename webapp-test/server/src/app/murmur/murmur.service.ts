@@ -2,13 +2,19 @@ import {
   Injectable,
   NotFoundException,
   ForbiddenException,
-  ConflictException,
   InternalServerErrorException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { In, Repository } from "typeorm";
 
-import { CreateMurmurDto } from "./dto/murmur.dto";
+import {
+  CreateMurmurDto,
+  CreateMurmurResponseDto,
+  DeleteMurmurResponseDto,
+  MurmurDetailResponseDto,
+  MurmurListResponseDto,
+  ToggleLikeResponseDto,
+} from "./dto/murmur.dto";
 import { Murmur } from "../../entities/murmur.entity";
 import { Like } from "../../entities/like.entity";
 import { PaginationDto } from "src/common/dtos/pagination.dto";
@@ -22,7 +28,10 @@ export class MurmurService {
     private likeRepo: Repository<Like>
   ) {}
 
-  async createMurmur(userId: number, dto: CreateMurmurDto) {
+  async createMurmur(
+    userId: number,
+    dto: CreateMurmurDto
+  ): Promise<CreateMurmurResponseDto> {
     try {
       const murmur = this.murmurRepo.create({
         content: dto.content,
@@ -34,7 +43,10 @@ export class MurmurService {
     }
   }
 
-  async deleteMurmur(userId: number, murmurId: number) {
+  async deleteMurmur(
+    userId: number,
+    murmurId: number
+  ): Promise<DeleteMurmurResponseDto> {
     try {
       const murmur = await this.murmurRepo.findOne({
         where: { id: murmurId },
@@ -51,7 +63,10 @@ export class MurmurService {
     }
   }
 
-  async listMurmurs(userId: number, pagination: PaginationDto) {
+  async listMurmurs(
+    userId: number,
+    pagination: PaginationDto
+  ): Promise<MurmurListResponseDto> {
     try {
       const { page, limit } = pagination;
       let [murmurs, count] = await this.murmurRepo.findAndCount({
@@ -61,29 +76,20 @@ export class MurmurService {
         order: { createdAt: "DESC" },
       });
 
-      const murmurIds = murmurs.map((m) => m.id);
-      if (murmurIds.length === 0) {
-        return { data: [], count };
-      }
-
-      const likes = await this.likeRepo.find({
-        where: {
-          user: { id: userId },
-          murmur: { id: In(murmurIds) },
-        },
-        relations: ["murmur"],
-      });
-      const likedMurmurIds = new Set(likes.map((like) => like.murmur.id));
-
       const data = await Promise.all(
         murmurs.map(async (murmur) => {
           const totalLikes = await this.likeRepo.count({
             where: { murmur: { id: murmur.id } },
           });
-
+          const isLiked = await this.likeRepo.exists({
+            where: {
+              user: { id: userId },
+              murmur: { id: murmur.id },
+            },
+          });
           return {
             ...murmur,
-            isLiked: likedMurmurIds.has(murmur.id),
+            isLiked,
             totalLikes,
           };
         })
@@ -91,11 +97,15 @@ export class MurmurService {
 
       return { data, count };
     } catch (error) {
+      console.log(error);
       throw new InternalServerErrorException(error.message);
     }
   }
 
-  async toggleLikeMurmur(userId: number, murmurId: number) {
+  async toggleLikeMurmur(
+    userId: number,
+    murmurId: number
+  ): Promise<ToggleLikeResponseDto> {
     try {
       const existingLike = await this.likeRepo.findOne({
         where: { user: { id: userId }, murmur: { id: murmurId } },
@@ -121,7 +131,7 @@ export class MurmurService {
     pagination: PaginationDto,
     userId: number,
     otherUserId: number
-  ) {
+  ): Promise<MurmurListResponseDto> {
     try {
       const { page, limit } = pagination;
       let [murmurs, count] = await this.murmurRepo.findAndCount({
@@ -132,54 +142,36 @@ export class MurmurService {
         relations: ["user"],
       });
 
-      if (murmurs.length === 0) {
-        return {
-          data: [],
-          total: count,
-          page,
-          limit,
-          totalPages: Math.ceil(count / limit),
-        };
-      }
-
-      const murmurIds = murmurs.map((m) => m.id);
-
-      const likes = await this.likeRepo.find({
-        where: {
-          user: { id: userId },
-          murmur: { id: In(murmurIds) },
-        },
-        relations: ["murmur"],
-      });
-      const likedMurmurIds = new Set(likes.map((like) => like.murmur.id));
-
       const data = await Promise.all(
         murmurs.map(async (murmur) => {
           const totalLikes = await this.likeRepo.count({
             where: { murmur: { id: murmur.id } },
           });
+          const isLiked = await this.likeRepo.exists({
+            where: {
+              user: { id: userId },
+              murmur: { id: murmur.id },
+            },
+          });
 
           return {
             ...murmur,
-            isLiked: likedMurmurIds.has(murmur.id),
+            isLiked,
             totalLikes,
           };
         })
       );
 
-      return {
-        data,
-        total: count,
-        page,
-        limit,
-        totalPages: Math.ceil(count / limit),
-      };
+      return { data, count };
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
   }
 
-  async getMurmurDetail(userId: number, murmurId: number) {
+  async getMurmurDetail(
+    userId: number,
+    murmurId: number
+  ): Promise<MurmurDetailResponseDto> {
     try {
       const murmur = await this.murmurRepo.findOne({
         where: { id: murmurId },
@@ -190,14 +182,27 @@ export class MurmurService {
       const totalLikes = await this.likeRepo.count({
         where: { murmur: { id: murmurId } },
       });
-      const isLiked = await this.likeRepo.find({
+      const isLiked = await this.likeRepo.exists({
         where: {
           user: { id: userId },
           murmur: { id: murmurId },
         },
-        relations: ["murmur"],
       });
-      return { ...murmur, totalLikes,isLiked };
+
+      return {
+        id: murmur.id,
+        content: murmur.content,
+        createdAt: murmur.createdAt,
+        updatedAt: murmur.updatedAt,
+        deletedAt: murmur.deletedAt,
+        user: {
+          id: murmur.user.id,
+          name: murmur.user.name,
+          email: murmur.user.email,
+        },
+        isLiked,
+        totalLikes,
+      };
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
