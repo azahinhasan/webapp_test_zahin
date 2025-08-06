@@ -17,6 +17,7 @@ export interface LoginResponseData {
 export interface User {
   id: number
   name: string
+  email: string
   followCount: number
   followedCount: number
   isFollowing: boolean

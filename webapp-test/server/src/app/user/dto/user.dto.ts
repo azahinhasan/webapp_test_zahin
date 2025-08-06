@@ -5,11 +5,18 @@ export interface ToggleFollowResponseDto {
   message: string;
 }
 
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  isFollowing?: boolean;
+}
+
 export interface UserInfoResponseDto {
   id: number;
   name: string;
-  followCount: number;
-  followedCount: number;
+  totalFollowed: User[];
+  totalFollow: User[];
   isFollowing: boolean;
   isCurrentUser: boolean;
 }

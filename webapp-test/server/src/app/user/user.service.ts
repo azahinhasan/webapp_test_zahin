@@ -65,12 +65,47 @@ export class UserService {
       const user = await this.userRepo.findOne({ where: { id: otherUserId } });
       if (!user) throw new NotFoundException("User not found");
 
-      const followCount = await this.followRepo.count({
-        where: { follower: { id: otherUserId } },
-      });
-      const followedCount = await this.followRepo.count({
+      const followerFollows = await this.followRepo.find({
         where: { following: { id: otherUserId } },
+        relations: ["follower"],
       });
+
+      const totalFollowed = await Promise.all(
+        followerFollows.map(async (f) => {
+          const isFollowing = await this.followRepo.exists({
+            where: {
+              follower: { id: userId },
+              following: { id: f.follower.id },
+            },
+          });
+          return {
+            ...f.follower,
+            isFollowing,
+            isCurrentUser: userId === f.follower.id,
+          };
+        })
+      );
+
+      const followingFollows = await this.followRepo.find({
+        where: { follower: { id: otherUserId } },
+        relations: ["following"],
+      });
+
+      const totalFollow = await Promise.all(
+        followingFollows.map(async (f) => {
+          const isFollowing = await this.followRepo.exists({
+            where: {
+              follower: { id: userId },
+              following: { id: f.following.id },
+            },
+          });
+          return {
+            ...f.following,
+            isFollowing,
+            isCurrentUser: userId === f.following.id,
+          };
+        })
+      );
 
       const isFollowing = await this.followRepo.exists({
         where: { follower: { id: userId }, following: { id: otherUserId } },
@@ -79,12 +114,13 @@ export class UserService {
       return {
         id: user.id,
         name: user.name,
-        followCount,
-        followedCount,
+        totalFollow,
+        totalFollowed,
         isFollowing,
         isCurrentUser: userId === otherUserId,
       };
     } catch (error) {
+      console.log(error);
       throw new InternalServerErrorException(error.message);
     }
   }
