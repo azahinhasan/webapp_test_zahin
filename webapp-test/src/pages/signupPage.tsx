@@ -30,9 +30,12 @@ const SignupPage: React.FC = () => {
       navigate('/login')
     },
     onError: (error: AxiosError<{ message: string }>) => {
-      setErrorMsg(
-        error.response?.data?.message || 'Signup failed. Please try again.',
-      )
+      const message = error.response?.data?.message
+      if (Array.isArray(message)) {
+        setErrorMsg(message.join('\n'))
+      } else {
+        setErrorMsg(message || 'Signup failed. Please try again.')
+      }
     },
   })
 

@@ -30,10 +30,6 @@ const MurmurCard: React.FC<Props> = ({
   isDeleting = false,
   showFullText = false,
 }) => {
-  const truncatedContent =
-    murmur.content.length > 90
-      ? murmur.content.slice(0, 90) + '...'
-      : murmur.content
 
   return (
     <Paper
@@ -70,9 +66,16 @@ const MurmurCard: React.FC<Props> = ({
           <Box sx={{ my: 1 }}>
             <Typography
               variant="body1"
-              sx={{ whiteSpace: 'pre-line', display: 'inline' }}
+              sx={{
+                display: showFullText ? 'block' : '-webkit-box',
+                WebkitLineClamp: showFullText ? 'none' : 2,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: showFullText ? 'pre-line' : 'normal',
+              }}
             >
-              {showFullText ? murmur.content : truncatedContent}
+              {murmur.content}
             </Typography>
           </Box>
 

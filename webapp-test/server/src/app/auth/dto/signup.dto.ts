@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength } from "class-validator";
+import { IsEmail, IsNotEmpty, IsString, MaxLength, MinLength } from "class-validator";
 
 export class SignupDto {
   @IsEmail()
@@ -11,5 +11,7 @@ export class SignupDto {
 
   @IsNotEmpty()
   @IsString()
+  @MinLength(2, { message: "Name must be at least 2 characters long" })
+  @MaxLength(45, { message: "Name must be at most 20 characters long" })
   name!: string;
 }
