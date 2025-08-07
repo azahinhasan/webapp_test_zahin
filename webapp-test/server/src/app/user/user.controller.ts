@@ -8,7 +8,7 @@ import {
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { GetIssuer } from "../../common/decorators/get-issuer.decorator";
-import { CsrfGuard } from "../../guards/auth-guard";
+import { AuthGuard } from "../../guards/auth-guard";
 import { getIssuer } from "../../common/dtos/index.dto";
 import { PaginationDto } from "src/common/dtos/pagination.dto";
 
@@ -17,25 +17,25 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Patch(":id/follow")
-  @UseGuards(CsrfGuard)
+  @UseGuards(AuthGuard)
   follow(@GetIssuer() issuer: getIssuer, @Param("id") id: number) {
     return this.userService.toggleFollowUser(issuer.user.sub, id);
   }
 
   @Get("me")
-  @UseGuards(CsrfGuard)
+  @UseGuards(AuthGuard)
   getMyInfo(@GetIssuer() issuer: getIssuer) {
     return this.userService.getUserInfo(null, issuer.user.sub);
   }
 
   @Get(":id")
-  @UseGuards(CsrfGuard)
+  @UseGuards(AuthGuard)
   getUserInfo(@GetIssuer() issuer: getIssuer, @Param("id") id: number) {
     return this.userService.getUserInfo(issuer.user.sub, id);
   }
 
   @Get(":id/following")
-  @UseGuards(CsrfGuard)
+  @UseGuards(AuthGuard)
   getFollowing(
     @GetIssuer() issuer: getIssuer,
     @Param("id") id: number,
@@ -45,7 +45,7 @@ export class UserController {
   }
 
   @Get(":id/followers")
-  @UseGuards(CsrfGuard)
+  @UseGuards(AuthGuard)
   getFollowers(
     @GetIssuer() issuer: getIssuer,
     @Param("id") id: number,

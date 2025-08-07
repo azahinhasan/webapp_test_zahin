@@ -6,6 +6,8 @@ import { User, Follow, Murmur, Like } from "./entities";
 import { AuthModule, MurmurModule, UserModule } from "./app";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import configuration from "./config/configuration";
+import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
+import { APP_GUARD } from "@nestjs/core";
 
 @Module({
   imports: [
@@ -13,6 +15,12 @@ import configuration from "./config/configuration";
       isGlobal: true,
       load: [configuration],
     }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 25,
+      },
+    ]),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -33,6 +41,12 @@ import configuration from "./config/configuration";
     UserModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}

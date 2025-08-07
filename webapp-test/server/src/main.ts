@@ -7,6 +7,7 @@ import { ValidationPipe } from "@nestjs/common";
 import { ResponseMessageInterceptor } from "./common/interceptor/response-message.interceptor";
 import * as csurf from "csurf";
 import { ConfigService } from "@nestjs/config";
+import { LoggingMonitoringInterceptor } from "./common/interceptor/logging-monitoring.interceptor";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,7 +16,11 @@ async function bootstrap() {
   // ミドルウェアの設定
   app.use(helmet());
   app.use(cors());
-  app.useGlobalInterceptors(new ResponseMessageInterceptor());
+
+  app.useGlobalInterceptors(
+    new ResponseMessageInterceptor(),
+    new LoggingMonitoringInterceptor()
+  );
   app.use(cookieParser(configService.get<string>("jwt.secret")));
   app.useGlobalPipes(
     new ValidationPipe({
@@ -29,8 +34,10 @@ async function bootstrap() {
         sameSite: "strict",
         secure: process.env.NODE_ENV === "production",
       },
+      //ignoreMethods: [], //Empty array = do not ignore any methods[GET, POST, PUT, DELETE]. Note: Defult GET method is ignored
     })
   );
+  
   app.setGlobalPrefix("api/v1");
   await app.listen(3001);
   console.log("Example app listening on port 3001!");

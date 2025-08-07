@@ -41,13 +41,7 @@
 			},
 			"request": {
 				"method": "GET",
-				"header": [
-					{
-						"key": "x-csrf-token",
-						"value": "{{csrf-token}}",
-						"type": "text"
-					}
-				],
+				"header": [],
 				"body": {
 					"mode": "raw",
 					"raw": "",
@@ -140,7 +134,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"email\": \"test@gmail.com\",\r\n  \"password\": \"test\"\r\n}\r\n",
+					"raw": "{\r\n  \"email\": \"test@example.com\",\r\n  \"password\": \"test\"\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -180,12 +174,13 @@
 					{
 						"key": "x-csrf-token",
 						"value": "{{csrf-token}}",
-						"type": "text"
+						"type": "text",
+						"disabled": true
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"content\": \"This is my first murmur!\"\r\n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -271,7 +266,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"content\": \"This is my first murmur!\"\r\n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -316,12 +311,13 @@
 					{
 						"key": "x-csrf-token",
 						"value": "{{csrf-token}}",
-						"type": "text"
+						"type": "text",
+						"disabled": true
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"content\": \"This is my first murmur!\"\r\n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -416,7 +412,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"content\": \"This is my first murmur!\"\r\n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -468,7 +464,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"content\": \"This is my first murmur!\"\r\n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -556,7 +552,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"content\": \"This is my first murmur!\"\r\n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -608,7 +604,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"content\": \"This is my first murmur!\"\r\n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
