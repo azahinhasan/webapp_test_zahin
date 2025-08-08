@@ -1,0 +1,30 @@
+import { Body, Controller, Get, Post, Req, Res } from "@nestjs/common";
+import { AuthService } from "./auth.service";
+import { SignupDto } from "./dtos/signup.dto";
+import { Response } from "express";
+import { LoginDto } from "./dtos/login.dto";
+
+@Controller("auth")
+export class AuthController {
+  constructor(private readonly authService: AuthService) {}
+
+  @Post("signup")
+  async signup(@Body() dto: SignupDto) {
+    return this.authService.signup(dto.email, dto.password, dto.name);
+  }
+
+  @Post("login")
+  async login(
+    @Body() dto: LoginDto
+  ) {
+    const result = await this.authService.login(dto.email, dto.password);
+    return result;
+  }
+
+  @Get("csrf-token")
+  getCsrfToken(@Req() req: Request, @Res() res: Response) {
+    const token = (req as any).csrfToken();
+    res.cookie("csrf-token", token);
+    res.json({ csrfToken: token });
+  }
+}
