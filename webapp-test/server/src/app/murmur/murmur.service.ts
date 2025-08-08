@@ -80,7 +80,7 @@ export class MurmurService {
       if (followingIds.length === 0) {
         return { data: [], count: 0 };
       }
-
+      followingIds.push(userId);
       const [murmurs, count] = await this.murmurRepo.findAndCount({
         where: {
           user: {

@@ -17,7 +17,7 @@
 - Authentication is handled using JWT.
 
 ### Timeline
-- The Timeline page displays all murmurs posted by users the current user follows, along with their details and like counts.
+- The Timeline page displays all own and murmurs posted by users the current user follows, along with their details and like counts.
 - Includes pagination and allows users to like or unlike any murmur.
 - Each murmur card includes the poster's name — clicking it navigates to their profile.
 - Long murmurs are truncated but can view the full text by clicking View Details.
