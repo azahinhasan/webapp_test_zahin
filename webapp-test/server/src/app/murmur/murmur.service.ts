@@ -14,7 +14,7 @@ import {
   MurmurDetailResponseDto,
   MurmurListResponseDto,
   ToggleLikeResponseDto,
-} from "./dto/murmur.dto";
+} from "./dtos/murmur.dto";
 import { PaginationDto } from "src/common/dtos/pagination.dto";
 import { Follow, Like, Murmur } from "src/entities";
 

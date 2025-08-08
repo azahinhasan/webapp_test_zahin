@@ -10,7 +10,7 @@ import {
   Patch,
 } from "@nestjs/common";
 import { MurmurService } from "./murmur.service";
-import { CreateMurmurDto } from "./dto/murmur.dto";
+import { CreateMurmurDto } from "./dtos/murmur.dto";
 import { AuthGuard } from "../../guards/auth-guard";
 import { GetIssuer } from "../../common/decorators/get-issuer.decorator";
 import { getIssuer } from "../../common/dtos/index.dto";

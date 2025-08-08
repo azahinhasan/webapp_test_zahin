@@ -57,20 +57,20 @@ server/
 ├─ src/
 │  ├─ app/
 │  │  ├─ auth/
-│  │  │  ├─ dto/
+│  │  │  ├─ dtos/
 │  │  │  │  ├─ login.dto.ts
 │  │  │  │  └─ signup.dto.ts
 │  │  │  ├─ auth.controller.ts
 │  │  │  ├─ auth.module.ts
 │  │  │  └─ auth.service.ts
 │  │  ├─ murmur/
-│  │  │  ├─ dto/
+│  │  │  ├─ dtos/
 │  │  │  │  └─ murmur.dto.ts
 │  │  │  ├─ murmur.controller.ts
 │  │  │  ├─ murmur.module.ts
 │  │  │  └─ murmur.service.ts
 │  │  ├─ user/
-│  │  │  ├─ dto/
+│  │  │  ├─ dtos/
 │  │  │  │  └─ user.dto.ts
 │  │  │  ├─ user.controller.ts
 │  │  │  ├─ user.module.ts

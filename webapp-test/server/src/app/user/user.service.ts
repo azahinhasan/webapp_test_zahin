@@ -13,7 +13,7 @@ import {
   AllUserResponseDto,
   ToggleFollowResponseDto,
   UserInfoResponseDto,
-} from "./dto/user.dto";
+} from "./dtos/user.dto";
 
 @Injectable()
 export class UserService {

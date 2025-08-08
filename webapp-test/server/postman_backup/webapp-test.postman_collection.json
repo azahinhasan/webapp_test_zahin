@@ -81,7 +81,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"email\": \"test@example.com\",\r\n  \"password\": \"testtest\",\r\n  \"name\":\"test\"\r\n}\r\n",
+					"raw": "{\r\n  \"email\": \"test@example.com\",\r\n  \"password\": \"123456\",\r\n  \"name\":\"test\"\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
