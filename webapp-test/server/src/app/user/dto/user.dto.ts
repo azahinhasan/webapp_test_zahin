@@ -1,4 +1,11 @@
-import { IsNumber, IsString, IsEmail, IsBoolean, IsOptional, ValidateNested } from "class-validator";
+import {
+  IsNumber,
+  IsString,
+  IsEmail,
+  IsBoolean,
+  IsOptional,
+  ValidateNested,
+} from "class-validator";
 import { Type } from "class-transformer";
 
 export class FollowUserDto {
@@ -33,17 +40,23 @@ export class UserInfoResponseDto {
   @IsString()
   name: string;
 
-  @ValidateNested({ each: true })
-  @Type(() => User)
-  totalFollowed: User[];
-
-  @ValidateNested({ each: true })
-  @Type(() => User)
-  totalFollow: User[];
+  @IsNumber()
+  followedCount: number;
+  @IsNumber()
+  followCount: number;
 
   @IsBoolean()
   isFollowing: boolean;
 
   @IsBoolean()
   isCurrentUser: boolean;
+}
+
+export class AllUserResponseDto {
+  @ValidateNested()
+  @Type(() => User)
+  data: User[];
+
+  @IsNumber()
+  total: number;
 }

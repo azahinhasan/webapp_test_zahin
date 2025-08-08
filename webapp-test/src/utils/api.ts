@@ -48,17 +48,18 @@ export const getUserMurmurs = (userId: number, page: number) =>
 
 export const deleteMurmur = (id: number) => api_v1.delete(`/murmurs/${id}`)
 // Users
+export const getAllUsers = (page: number) => api_v1.get(`/users?page=${page}`)
+
 export const getMyUserInfo = () => api_v1.get('/users/me')
 
 export const getOtherUserInfo = (id: number) => api_v1.get(`/users/${id}`)
 
 export const followUser = (id: number) => api_v1.patch(`/users/${id}/follow`)
 
-export const getFollowers = (userId: number,page: number) =>
+export const getFollowers = (userId: number, page: number) =>
   api_v1.get(`/users/${userId}/followers?page=${page}`)
 
-export const getFollowing = (userId: number,page: number) =>
+export const getFollowing = (userId: number, page: number) =>
   api_v1.get(`/users/${userId}/following?page=${page}`)
-
 
 export default api_v1

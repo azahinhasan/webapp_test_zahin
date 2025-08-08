@@ -17,11 +17,16 @@
 - Authentication is handled using JWT.
 
 ### Timeline
-- The timeline page displays all murmurs with details and like counts.
+- The Timeline page displays all murmurs posted by users the current user follows, along with their details and like counts.
 - Includes pagination and allows users to like or unlike any murmur.
 - Each murmur card includes the poster's name — clicking it navigates to their profile.
 - Long murmurs are truncated but can view the full text by clicking View Details.
 - Users can post new murmurs directly from the timeline page.
+
+### People
+- Discover all other users on the platform.
+- Follow or unfollow users directly from the list.
+- Click on a user’s name to view their profile.
 
 ### Other User Profile
 - Displays all murmurs posted by the selected user.
@@ -41,11 +46,14 @@
 - CSRF token is automatically stored when visiting the page and used for secure requests.
 - Rate limiter (Throttler) implemented to prevent excessive API calls.
 - Includes logging and response interceptors for better debugging and tracking.
+- Proper validation is implemented with DTOs.
 - API versioning and more.
 
 ### Backend Folder Structure (NestJS)
 ```
 server/
+├─ postman_backup/
+│  └─ webapp-test.postman_collection.json
 ├─ src/
 │  ├─ app/
 │  │  ├─ auth/
@@ -90,16 +98,21 @@ server/
 │  │  └─ user.entity.ts
 │  ├─ guards/
 │  │  └─ auth-guard.ts
+│  ├─ app.controller.js
 │  ├─ app.controller.ts
+│  ├─ app.module.js
 │  ├─ app.module.ts
+│  ├─ app.service.js
 │  ├─ app.service.ts
-│  ├─ main.ts
+│  ├─ main.js
+│  └─ main.ts
 ├─ .gitignore
 ├─ nest-cli.json
 ├─ package-lock.json
 ├─ package.json
 ├─ tsconfig.json
 └─ yarn.lock
+
 ```
 
 ---
@@ -116,6 +129,7 @@ src/
 │  ├─ loginPage.tsx
 │  ├─ murmurDetailPage.tsx
 │  ├─ otherUserPage.tsx
+│  ├─ peoplePage.tsx
 │  ├─ profilePage.tsx
 │  ├─ signupPage.tsx
 │  └─ timelinePage.tsx

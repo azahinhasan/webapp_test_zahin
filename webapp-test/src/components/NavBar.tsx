@@ -28,6 +28,7 @@ const NavBar: React.FC = () => {
 
   const menuItems = [
     { text: 'Timeline', path: '/' },
+    { text: 'People', path: '/users' },
     { text: 'My Profile', path: '/my-profile' },
   ]
 
@@ -81,9 +82,7 @@ const NavBar: React.FC = () => {
                     onClick={() => navigateTo(path)}
                     sx={{
                       mx: 0.5,
-                      fontWeight: isActive
-                        ? 'bold'
-                        : '',
+                      fontWeight: isActive ? 'bold' : '',
                     }}
                     aria-current={isActive ? 'page' : undefined}
                   >

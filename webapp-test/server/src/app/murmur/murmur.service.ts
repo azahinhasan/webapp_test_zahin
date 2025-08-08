@@ -15,9 +15,8 @@ import {
   MurmurListResponseDto,
   ToggleLikeResponseDto,
 } from "./dto/murmur.dto";
-import { Murmur } from "../../entities/murmur.entity";
-import { Like } from "../../entities/like.entity";
 import { PaginationDto } from "src/common/dtos/pagination.dto";
+import { Follow, Like, Murmur } from "src/entities";
 
 @Injectable()
 export class MurmurService {
@@ -25,7 +24,9 @@ export class MurmurService {
     @InjectRepository(Murmur)
     private murmurRepo: Repository<Murmur>,
     @InjectRepository(Like)
-    private likeRepo: Repository<Like>
+    private likeRepo: Repository<Like>,
+    @InjectRepository(Follow)
+    private followRepo: Repository<Follow>
   ) {}
 
   async createMurmur(
@@ -69,10 +70,26 @@ export class MurmurService {
   ): Promise<MurmurListResponseDto> {
     try {
       const { page, limit } = pagination;
-      let [murmurs, count] = await this.murmurRepo.findAndCount({
+
+      const followings = await this.followRepo.find({
+        where: { follower: { id: userId } },
+        relations: ["following"],
+      });
+      const followingIds = followings.map((f) => f.following.id);
+
+      if (followingIds.length === 0) {
+        return { data: [], count: 0 };
+      }
+
+      const [murmurs, count] = await this.murmurRepo.findAndCount({
+        where: {
+          user: {
+            id: In(followingIds),
+          },
+        },
+        relations: ["user"],
         skip: (page - 1) * limit,
         take: limit,
-        relations: ["user"],
         order: { createdAt: "DESC" },
       });
 
@@ -81,12 +98,14 @@ export class MurmurService {
           const totalLikes = await this.likeRepo.count({
             where: { murmur: { id: murmur.id } },
           });
+
           const isLiked = await this.likeRepo.exists({
             where: {
               user: { id: userId },
               murmur: { id: murmur.id },
             },
           });
+
           return {
             ...murmur,
             isLiked,
@@ -190,16 +209,7 @@ export class MurmurService {
       });
 
       return {
-        id: murmur.id,
-        content: murmur.content,
-        createdAt: murmur.createdAt,
-        updatedAt: murmur.updatedAt,
-        deletedAt: murmur.deletedAt,
-        user: {
-          id: murmur.user.id,
-          name: murmur.user.name,
-          email: murmur.user.email,
-        },
+        ...murmur,
         isLiked,
         totalLikes,
       };

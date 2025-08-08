@@ -81,7 +81,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"email\": \"test@example.com\",\r\n  \"password\": \"test\",\r\n  \"name\":\"test\"\r\n}\r\n",
+					"raw": "{\r\n  \"email\": \"test@example.com\",\r\n  \"password\": \"testtest\",\r\n  \"name\":\"test\"\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -134,7 +134,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"email\": \"test@example.com\",\r\n  \"password\": \"test\"\r\n}\r\n",
+					"raw": "{\r\n  \"email\": \"test@example.com\",\r\n  \"password\": \"123456\"\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -199,6 +199,51 @@
 						"v1",
 						"users",
 						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Users",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					},
+					{
+						"key": "x-csrf-token",
+						"value": "{{csrf-token}}",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/v1/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"v1",
+						"users"
 					]
 				}
 			},

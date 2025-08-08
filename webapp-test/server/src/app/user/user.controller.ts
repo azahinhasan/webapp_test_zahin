@@ -16,6 +16,14 @@ import { PaginationDto } from "src/common/dtos/pagination.dto";
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Get("")
+  @UseGuards(AuthGuard)
+  getAllUsers(
+    @GetIssuer() issuer: getIssuer,
+    @Query() pagination: PaginationDto
+  ) {
+    return this.userService.getAllUsers(issuer.user.sub, pagination);
+  }
   @Patch(":id/follow")
   @UseGuards(AuthGuard)
   follow(@GetIssuer() issuer: getIssuer, @Param("id") id: number) {
